@@ -68,36 +68,110 @@ router.post(
       const telefono =
         message.from;
 
-      const mensaje =
-        message.text?.body || "";
+      const tipo =
+        message.type || "text";
 
-      console.log(
+      let mensaje = "";
+
+      let media_id = null;
+
+      // 🔥 TEXTO
+
+      if (tipo === "text") {
+
+        mensaje =
+          message.text?.body || "";
+
+      }
+
+      // 🔥 IMAGEN
+
+      else if (tipo === "image") {
+
+        media_id =
+          message.image?.id;
+
+        mensaje =
+          message.image?.caption || "";
+
+      }
+
+      // 🔥 VIDEO
+
+      else if (tipo === "video") {
+
+        media_id =
+          message.video?.id;
+
+        mensaje =
+          message.video?.caption || "";
+
+      }
+
+      // 🔥 AUDIO
+
+      else if (tipo === "audio") {
+
+        media_id =
+          message.audio?.id;
+
+      }
+
+      // 🔥 DOCUMENTO
+
+      else if (tipo === "document") {
+
+        media_id =
+          message.document?.id;
+
+        mensaje =
+          message.document?.filename || "";
+
+      }
+
+      // 🔥 STICKER
+
+      else if (tipo === "sticker") {
+
+        media_id =
+          message.sticker?.id;
+
+      }
+
+      console.log({
 
         telefono,
-        mensaje
+        tipo,
+        mensaje,
+        media_id
 
-      );
+      });
 
       const { data, error } =
-  await supabase
-    .from("messages")
-    .insert({
 
-      telefono,
-      mensaje,
-      from_me: false
+        await supabase
 
-    });
+          .from("messages")
 
-console.log(
-  "SUPABASE RESULT:",
-  data
-);
+          .insert({
 
-console.log(
-  "SUPABASE ERROR:",
-  error
-);
+            telefono,
+            mensaje,
+            tipo,
+            media_id,
+            from_me: false
+
+          });
+
+      console.log(
+        "SUPABASE RESULT:",
+        data
+      );
+
+      console.log(
+        "SUPABASE ERROR:",
+        error
+      );
 
       res.sendStatus(200);
 
