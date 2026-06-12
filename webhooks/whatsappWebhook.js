@@ -3,6 +3,13 @@ const router = require("express").Router();
 const supabase =
   require("../lib/supabase");
 
+const {
+  descargarMedia,
+  subirMediaASupabase
+} = require(
+  "../services/whatsapp/api"
+);
+
 // ======================================
 // VERIFY WEBHOOK
 // ======================================
@@ -116,7 +123,22 @@ router.post(
           message.image?.id;
 
         media_url =
-          message.image?.url || null;
+  message.image?.url || null;
+
+if (media_url) {
+
+  const buffer =
+    await descargarMedia(
+      media_url
+    );
+
+  media_url =
+    await subirMediaASupabase(
+      buffer,
+      "jpg"
+    );
+
+}
 
         mensaje =
           message.image?.caption || "";
@@ -133,7 +155,22 @@ router.post(
           message.video?.id;
 
         media_url =
-          message.video?.url || null;
+  message.video?.url || null;
+
+if (media_url) {
+
+  const buffer =
+    await descargarMedia(
+      media_url
+    );
+
+  media_url =
+    await subirMediaASupabase(
+      buffer,
+      "mp4"
+    );
+
+}
 
         mensaje =
           message.video?.caption || "";
@@ -150,7 +187,22 @@ router.post(
           message.audio?.id;
 
         media_url =
-          message.audio?.url || null;
+  message.audio?.url || null;
+
+if (media_url) {
+
+  const buffer =
+    await descargarMedia(
+      media_url
+    );
+
+  media_url =
+    await subirMediaASupabase(
+      buffer,
+      "ogg"
+    );
+
+}
 
       }
 
@@ -164,7 +216,22 @@ router.post(
           message.document?.id;
 
         media_url =
-          message.document?.url || null;
+  message.document?.url || null;
+
+if (media_url) {
+
+  const buffer =
+    await descargarMedia(
+      media_url
+    );
+
+  media_url =
+    await subirMediaASupabase(
+      buffer,
+      "pdf"
+    );
+
+}
 
         mensaje =
           message.document?.filename || "";
@@ -181,7 +248,22 @@ router.post(
           message.sticker?.id;
 
         media_url =
-          message.sticker?.url || null;
+  message.sticker?.url || null;
+
+if (media_url) {
+
+  const buffer =
+    await descargarMedia(
+      media_url
+    );
+
+  media_url =
+    await subirMediaASupabase(
+      buffer,
+      "webp"
+    );
+
+}
 
       }
 

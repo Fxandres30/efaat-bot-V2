@@ -9,8 +9,6 @@ const TOKEN =
 const PHONE_NUMBER_ID =
   process.env.PHONE_NUMBER_ID;
 
-const supabase =
-  require("../../lib/supabase");
 
 const crypto =
   require("crypto");
