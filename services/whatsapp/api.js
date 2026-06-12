@@ -131,25 +131,51 @@ async function enviarTemplateComprobante(
 // DESCARGAR MEDIA
 
 async function descargarMedia(
-  mediaUrl
+mediaUrl
 ) {
 
-  const response =
-    await axios.get(
-      mediaUrl,
-      {
-        responseType:
-          "arraybuffer",
-        headers: {
-          Authorization:
-            `Bearer ${TOKEN}`
-        }
-      }
-    );
+try {
 
-  return Buffer.from(
-    response.data
+const response =
+  await axios.get(
+    mediaUrl,
+    {
+      responseType:
+        "arraybuffer",
+      headers: {
+        Authorization:
+          `Bearer ${TOKEN}`
+      }
+    }
   );
+
+return Buffer.from(
+  response.data
+);
+
+
+} catch (err) {
+
+console.log(
+  "ERROR DESCARGANDO MEDIA"
+);
+
+console.log(
+  "STATUS:",
+  err.response?.status
+);
+
+console.log(
+  "DATA:"
+);
+
+console.log(
+  err.response?.data?.toString?.()
+);
+
+throw err;
+
+}
 
 }
 
