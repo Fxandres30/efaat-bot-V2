@@ -1,14 +1,7 @@
 const router = require("express").Router();
 
 const supabase =
-  require("../lib/supabase");
-
-const {
-  descargarMedia,
-  subirMediaASupabase
-} = require(
-  "../services/whatsapp/api"
-);
+require("../lib/supabase");
 
 // ======================================
 // VERIFY WEBHOOK
@@ -16,30 +9,32 @@ const {
 
 router.get("/webhook", (req, res) => {
 
-  const verifyToken =
-    "efaat_verify";
+const verifyToken =
+"efaat_verify";
 
-  const mode =
-    req.query["hub.mode"];
+const mode =
+req.query["hub.mode"];
 
-  const token =
-    req.query["hub.verify_token"];
+const token =
+req.query["hub.verify_token"];
 
-  const challenge =
-    req.query["hub.challenge"];
+const challenge =
+req.query["hub.challenge"];
 
-  if (
-    mode === "subscribe" &&
-    token === verifyToken
-  ) {
+if (
+mode === "subscribe" &&
+token === verifyToken
+) {
 
-    return res
-      .status(200)
-      .send(challenge);
 
-  }
+return res
+  .status(200)
+  .send(challenge);
 
-  return res.sendStatus(403);
+
+}
+
+return res.sendStatus(403);
 
 });
 
@@ -49,301 +44,226 @@ router.get("/webhook", (req, res) => {
 
 router.post(
 
-  "/webhook",
+"/webhook",
 
-  async (req, res) => {
+async (req, res) => {
 
-    try {
 
-      const message =
+try {
 
-        req.body?.entry?.[0]
-          ?.changes?.[0]
-          ?.value?.messages?.[0];
+  const message =
 
-      console.log(
-        "========= MENSAJE COMPLETO ========="
-      );
+    req.body?.entry?.[0]
+      ?.changes?.[0]
+      ?.value?.messages?.[0];
 
-      console.log(
-        JSON.stringify(
-          message,
-          null,
-          2
-        )
-      );
+  console.log(
+    "========= MENSAJE COMPLETO ========="
+  );
 
-      console.log(
-        "===================================="
-      );
+  console.log(
+    JSON.stringify(
+      message,
+      null,
+      2
+    )
+  );
 
-      if (!message) {
+  console.log(
+    "===================================="
+  );
 
-        console.log(
-          "NO MESSAGE",
-          JSON.stringify(
-            req.body,
-            null,
-            2
-          )
-        );
+  if (!message) {
 
-        return res.sendStatus(200);
-
-      }
-
-      const telefono =
-        message.from;
-
-      const tipo =
-        message.type || "text";
-
-      let mensaje = "";
-      let media_id = null;
-      let media_url = null;
-
-      // ==========================
-      // TEXTO
-      // ==========================
-
-      if (tipo === "text") {
-
-        mensaje =
-          message.text?.body || "";
-
-      }
-
-      // ==========================
-      // IMAGEN
-      // ==========================
-
-      else if (tipo === "image") {
-
-        media_id =
-          message.image?.id;
-
-        media_url =
-  message.image?.url || null;
-
-if (media_url) {
-
-  const buffer =
-    await descargarMedia(
-      media_url
+    console.log(
+      "NO MESSAGE",
+      JSON.stringify(
+        req.body,
+        null,
+        2
+      )
     );
 
-  media_url =
-    await subirMediaASupabase(
-      buffer,
-      "jpg"
-    );
-
-}
-
-        mensaje =
-          message.image?.caption || "";
-
-      }
-
-      // ==========================
-      // VIDEO
-      // ==========================
-
-      else if (tipo === "video") {
-
-        media_id =
-          message.video?.id;
-
-        media_url =
-  message.video?.url || null;
-
-if (media_url) {
-
-  const buffer =
-    await descargarMedia(
-      media_url
-    );
-
-  media_url =
-    await subirMediaASupabase(
-      buffer,
-      "mp4"
-    );
-
-}
-
-        mensaje =
-          message.video?.caption || "";
-
-      }
-
-      // ==========================
-      // AUDIO
-      // ==========================
-
-      else if (tipo === "audio") {
-
-        media_id =
-          message.audio?.id;
-
-        media_url =
-  message.audio?.url || null;
-
-if (media_url) {
-
-  const buffer =
-    await descargarMedia(
-      media_url
-    );
-
-  media_url =
-    await subirMediaASupabase(
-      buffer,
-      "ogg"
-    );
-
-}
-
-      }
-
-      // ==========================
-      // DOCUMENTO
-      // ==========================
-
-      else if (tipo === "document") {
-
-        media_id =
-          message.document?.id;
-
-        media_url =
-  message.document?.url || null;
-
-if (media_url) {
-
-  const buffer =
-    await descargarMedia(
-      media_url
-    );
-
-  media_url =
-    await subirMediaASupabase(
-      buffer,
-      "pdf"
-    );
-
-}
-
-        mensaje =
-          message.document?.filename || "";
-
-      }
-
-      // ==========================
-      // STICKER
-      // ==========================
-
-      else if (tipo === "sticker") {
-
-        media_id =
-          message.sticker?.id;
-
-        media_url =
-  message.sticker?.url || null;
-
-if (media_url) {
-
-  const buffer =
-    await descargarMedia(
-      media_url
-    );
-
-  media_url =
-    await subirMediaASupabase(
-      buffer,
-      "webp"
-    );
-
-}
-
-      }
-
-      console.log(
-        "DATOS A GUARDAR"
-      );
-
-      console.log({
-
-        telefono,
-        tipo,
-        mensaje,
-        media_id,
-        media_url
-
-      });
-
-      const {
-        data,
-        error
-      } = await supabase
-
-        .from("messages")
-
-        .insert({
-
-          telefono,
-          mensaje,
-          tipo,
-          media_id,
-          media_url,
-          from_me: false
-
-        })
-
-        .select();
-
-      if (error) {
-
-        console.log(
-          "SUPABASE ERROR:",
-          error
-        );
-
-      }
-
-      else {
-
-        console.log(
-          "GUARDADO OK:",
-          data
-        );
-
-      }
-
-      return res.sendStatus(200);
-
-    }
-
-    catch (err) {
-
-      console.log(
-        "ERROR WEBHOOK"
-      );
-
-      console.log(
-
-        err.response?.data ||
-        err.message ||
-        err
-
-      );
-
-      return res.sendStatus(500);
-
-    }
+    return res.sendStatus(200);
 
   }
+
+  const telefono =
+    message.from;
+
+  const tipo =
+    message.type || "text";
+
+  let mensaje = "";
+  let media_id = null;
+  let media_url = null;
+
+  // ==========================
+  // TEXTO
+  // ==========================
+
+  if (tipo === "text") {
+
+    mensaje =
+      message.text?.body || "";
+
+  }
+
+  // ==========================
+  // IMAGEN
+  // ==========================
+
+  else if (tipo === "image") {
+
+    media_id =
+      message.image?.id;
+
+    media_url =
+      message.image?.url || null;
+
+    mensaje =
+      message.image?.caption || "";
+
+  }
+
+  // ==========================
+  // VIDEO
+  // ==========================
+
+  else if (tipo === "video") {
+
+    media_id =
+      message.video?.id;
+
+    media_url =
+      message.video?.url || null;
+
+    mensaje =
+      message.video?.caption || "";
+
+  }
+
+  // ==========================
+  // AUDIO
+  // ==========================
+
+  else if (tipo === "audio") {
+
+    media_id =
+      message.audio?.id;
+
+    media_url =
+      message.audio?.url || null;
+
+  }
+
+  // ==========================
+  // DOCUMENTO
+  // ==========================
+
+  else if (tipo === "document") {
+
+    media_id =
+      message.document?.id;
+
+    media_url =
+      message.document?.url || null;
+
+    mensaje =
+      message.document?.filename || "";
+
+  }
+
+  // ==========================
+  // STICKER
+  // ==========================
+
+  else if (tipo === "sticker") {
+
+    media_id =
+      message.sticker?.id;
+
+    media_url =
+      message.sticker?.url || null;
+
+  }
+
+  console.log(
+    "DATOS A GUARDAR"
+  );
+
+  console.log({
+
+    telefono,
+    tipo,
+    mensaje,
+    media_id,
+    media_url
+
+  });
+
+  const {
+    data,
+    error
+  } = await supabase
+
+    .from("messages")
+
+    .insert({
+
+      telefono,
+      mensaje,
+      tipo,
+      media_id,
+      media_url,
+      from_me: false
+
+    })
+
+    .select();
+
+  if (error) {
+
+    console.log(
+      "SUPABASE ERROR:",
+      error
+    );
+
+  }
+
+  else {
+
+    console.log(
+      "GUARDADO OK:",
+      data
+    );
+
+  }
+
+  return res.sendStatus(200);
+
+}
+
+catch (err) {
+
+  console.log(
+    "ERROR WEBHOOK"
+  );
+
+  console.log(
+    err.response?.data ||
+    err.message ||
+    err
+  );
+
+  return res.sendStatus(500);
+
+}
+
+
+}
 
 );
 
 module.exports =
-  router;
+router;
