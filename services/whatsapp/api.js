@@ -122,9 +122,10 @@ async function enviarTemplateComprobante(
 }
 
 module.exports = {
-
   enviarTexto,
   enviarImagen,
-  enviarTemplateComprobante
-
+  enviarTemplateComprobante,
+  obtenerMediaUrl,
+  descargarMedia,
+  subirMediaASupabase
 };
