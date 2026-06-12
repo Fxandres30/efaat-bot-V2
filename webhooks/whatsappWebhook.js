@@ -4,6 +4,7 @@ const supabase =
 require("../lib/supabase");
 
 const {
+  obtenerMediaUrl,
   descargarMedia,
   subirMediaASupabase
 } = require(
@@ -119,21 +120,29 @@ try {
   // ==========================
   // IMAGEN
   // ==========================
-else if (tipo === "image") {
+ 
+  else if (tipo === "image") {
 
   media_id =
     message.image?.id;
 
-  media_url =
-    message.image?.url || null;
-
   mensaje =
     message.image?.caption || "";
 
-  if (media_url) {
+  if (media_id) {
 
     console.log(
-      "DESCARGANDO IMAGEN..."
+      "OBTENIENDO URL MEDIA..."
+    );
+
+    media_url =
+      await obtenerMediaUrl(
+        media_id
+      );
+
+    console.log(
+      "URL META:",
+      media_url
     );
 
     const buffer =
@@ -160,7 +169,6 @@ else if (tipo === "image") {
   }
 
 }
-
   // ==========================
   // VIDEO
   // ==========================

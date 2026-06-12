@@ -127,6 +127,26 @@ async function enviarTemplateComprobante(
 
 }
 
+// OBTENER URL REAL DE META
+
+async function obtenerMediaUrl(
+  mediaId
+) {
+
+  const response =
+    await axios.get(
+      `https://graph.facebook.com/v22.0/${mediaId}`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${TOKEN}`
+        }
+      }
+    );
+
+  return response.data.url;
+
+}
 
 // DESCARGAR MEDIA
 
@@ -217,6 +237,7 @@ module.exports = {
   enviarTexto,
   enviarImagen,
   enviarTemplateComprobante,
+  obtenerMediaUrl,
   descargarMedia,
   subirMediaASupabase
 };
