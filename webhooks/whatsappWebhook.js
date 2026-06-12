@@ -78,15 +78,26 @@ router.post(
 
       );
 
-      await supabase
-        .from("messages")
-        .insert({
+      const { data, error } =
+  await supabase
+    .from("messages")
+    .insert({
 
-          telefono,
-          mensaje,
-          from_me: false
+      telefono,
+      mensaje,
+      from_me: false
 
-        });
+    });
+
+console.log(
+  "SUPABASE RESULT:",
+  data
+);
+
+console.log(
+  "SUPABASE ERROR:",
+  error
+);
 
       res.sendStatus(200);
 
