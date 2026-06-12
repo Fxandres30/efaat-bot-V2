@@ -164,10 +164,73 @@ async function enviarTemplateComprobante(
 
 }
 
+// 🔥 OBTENER URL DE MEDIA
+
+async function obtenerMediaUrl(
+  mediaId
+) {
+
+  const response =
+
+    await axios.get(
+
+      `https://graph.facebook.com/v22.0/${mediaId}`,
+
+      {
+
+        headers: {
+
+          Authorization:
+            `Bearer ${TOKEN}`
+
+        }
+
+      }
+
+    );
+
+  return response.data.url;
+
+}
+
+// 🔥 DESCARGAR MEDIA
+
+async function descargarMedia(
+  mediaUrl
+) {
+
+  const response =
+
+    await axios.get(
+
+      mediaUrl,
+
+      {
+
+        responseType:
+          "arraybuffer",
+
+        headers: {
+
+          Authorization:
+            `Bearer ${TOKEN}`
+
+        }
+
+      }
+
+    );
+
+  return response.data;
+
+}
+
 module.exports = {
 
   enviarTexto,
   enviarImagen,
-  enviarTemplateComprobante
+  enviarTemplateComprobante,
+  obtenerMediaUrl,
+  descargarMedia
 
 };

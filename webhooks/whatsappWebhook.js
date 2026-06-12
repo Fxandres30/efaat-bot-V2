@@ -4,6 +4,10 @@ const router =
 const supabase =
   require("../lib/supabase");
 
+const {
+  obtenerMediaUrl
+} = require("../services/api");
+
 // 🔥 VERIFY
 
 router.get(
@@ -43,6 +47,7 @@ router.get(
 
 );
 
+
 // 🔥 RECEIVE
 
 router.post(
@@ -66,112 +71,134 @@ router.post(
       }
 
       const telefono =
-        message.from;
+  message.from;
 
-      const tipo =
-        message.type || "text";
+const tipo =
+  message.type || "text";
 
-      let mensaje = "";
+let mensaje = "";
+let media_id = null;
+let media_url = null;
 
-      let media_id = null;
+// TEXTO
 
-      // 🔥 TEXTO
+if (tipo === "text") {
 
-      if (tipo === "text") {
+  mensaje =
+    message.text?.body || "";
 
-        mensaje =
-          message.text?.body || "";
+}
 
-      }
+// IMAGEN
 
-      // 🔥 IMAGEN
+else if (tipo === "image") {
 
-      else if (tipo === "image") {
+  media_id =
+    message.image?.id;
 
-        media_id =
-          message.image?.id;
+  mensaje =
+    message.image?.caption || "";
 
-        mensaje =
-          message.image?.caption || "";
+}
 
-      }
+// VIDEO
 
-      // 🔥 VIDEO
+else if (tipo === "video") {
 
-      else if (tipo === "video") {
+  media_id =
+    message.video?.id;
 
-        media_id =
-          message.video?.id;
+  mensaje =
+    message.video?.caption || "";
 
-        mensaje =
-          message.video?.caption || "";
+}
 
-      }
+// AUDIO
 
-      // 🔥 AUDIO
+else if (tipo === "audio") {
 
-      else if (tipo === "audio") {
+  media_id =
+    message.audio?.id;
 
-        media_id =
-          message.audio?.id;
+}
 
-      }
+// DOCUMENTO
 
-      // 🔥 DOCUMENTO
+else if (tipo === "document") {
 
-      else if (tipo === "document") {
+  media_id =
+    message.document?.id;
 
-        media_id =
-          message.document?.id;
+  mensaje =
+    message.document?.filename || "";
 
-        mensaje =
-          message.document?.filename || "";
+}
 
-      }
+// STICKER
 
-      // 🔥 STICKER
+else if (tipo === "sticker") {
 
-      else if (tipo === "sticker") {
+  media_id =
+    message.sticker?.id;
 
-        media_id =
-          message.sticker?.id;
+}
 
-      }
+// OBTENER URL
 
-      console.log({
+if (media_id) {
 
-        telefono,
-        tipo,
-        mensaje,
+  try {
+
+    media_url =
+      await obtenerMediaUrl(
         media_id
-
-      });
-
-      const { data, error } =
-
-        await supabase
-
-          .from("messages")
-
-          .insert({
-
-            telefono,
-            mensaje,
-            tipo,
-            media_id,
-            from_me: false
-
-          });
-
-      console.log(
-        "SUPABASE RESULT:",
-        data
       );
 
-      console.log(
-        "SUPABASE ERROR:",
-        error
-      );
+  }
+
+  catch (err) {
+
+    console.log(
+      "ERROR MEDIA:",
+      err.response?.data ||
+      err.message
+    );
+
+  }
+
+}
+
+// GUARDAR
+
+const { data, error } =
+
+  await supabase
+    .from("messages")
+    .insert({
+
+      telefono,
+      mensaje,
+      tipo,
+      media_id,
+      media_url,
+      from_me: false
+
+    });
+
+console.log({
+
+  telefono,
+  tipo,
+  mensaje,
+  media_id,
+  media_url
+
+});
+
+console.log(
+  "SUPABASE ERROR:",
+  error
+);
 
       res.sendStatus(200);
 
