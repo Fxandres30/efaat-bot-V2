@@ -6,7 +6,7 @@ const supabase =
 
 const {
   obtenerMediaUrl
-} = require("../services/api");
+} = require("../services/whatsapp/api");
 
 // 🔥 VERIFY
 
