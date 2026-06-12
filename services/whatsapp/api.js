@@ -9,6 +9,12 @@ const TOKEN =
 const PHONE_NUMBER_ID =
   process.env.PHONE_NUMBER_ID;
 
+const supabase =
+  require("../../lib/supabase");
+
+const crypto =
+  require("crypto");
+
 // 🔥 ENVIAR TEXTO
 
 async function enviarTexto(
@@ -225,12 +231,62 @@ async function descargarMedia(
 
 }
 
+// 🔥 SUBIR MEDIA A SUPABASE
+
+async function subirMediaASupabase(
+  buffer,
+  extension = "jpg"
+) {
+
+  const fileName =
+
+    `${Date.now()}-${crypto
+      .randomBytes(6)
+      .toString("hex")}.${extension}`;
+
+  const { error } =
+
+    await supabase.storage
+
+      .from("chat-media")
+
+      .upload(
+        fileName,
+        buffer,
+        {
+          upsert: false
+        }
+      );
+
+  if (error) {
+
+    throw error;
+
+  }
+
+  const { data } =
+
+    supabase.storage
+
+      .from("chat-media")
+
+      .getPublicUrl(
+        fileName
+      );
+
+  return data.publicUrl;
+
+}
+
 module.exports = {
 
   enviarTexto,
   enviarImagen,
   enviarTemplateComprobante,
+
   obtenerMediaUrl,
-  descargarMedia
+  descargarMedia,
+
+  subirMediaASupabase
 
 };
