@@ -1,5 +1,11 @@
 require("dotenv").config();
 
+const supabase =
+  require("../lib/supabase");
+
+const crypto =
+  require("crypto");
+
 const axios =
   require("axios");
 
@@ -121,11 +127,70 @@ async function enviarTemplateComprobante(
 
 }
 
+
+// DESCARGAR MEDIA
+
+async function descargarMedia(
+  mediaUrl
+) {
+
+  const response =
+    await axios.get(
+      mediaUrl,
+      {
+        responseType:
+          "arraybuffer",
+        headers: {
+          Authorization:
+            `Bearer ${TOKEN}`
+        }
+      }
+    );
+
+  return Buffer.from(
+    response.data
+  );
+
+}
+
+// SUBIR A SUPABASE
+
+async function subirMediaASupabase(
+  buffer,
+  extension = "jpg"
+) {
+
+  const fileName =
+    `${Date.now()}-${crypto
+      .randomBytes(6)
+      .toString("hex")}.${extension}`;
+
+  const { error } =
+    await supabase.storage
+      .from("chat-media")
+      .upload(
+        fileName,
+        buffer
+      );
+
+  if (error)
+    throw error;
+
+  const { data } =
+    supabase.storage
+      .from("chat-media")
+      .getPublicUrl(
+        fileName
+      );
+
+  return data.publicUrl;
+
+}
+
 module.exports = {
   enviarTexto,
   enviarImagen,
   enviarTemplateComprobante,
-  obtenerMediaUrl,
   descargarMedia,
   subirMediaASupabase
 };
