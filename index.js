@@ -33,7 +33,7 @@ app.use(
 
 app.use(
   "/debug",
-  require("./routes/testMedia")
+require("./routes/test-media")
 );
 
 // 🔥 WEBHOOK
