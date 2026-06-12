@@ -31,6 +31,11 @@ app.use(
   })
 );
 
+app.use(
+  "/debug",
+  require("./routes/testMedia")
+);
+
 // 🔥 WEBHOOK
 
 app.use(
