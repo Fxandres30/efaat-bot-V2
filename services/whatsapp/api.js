@@ -203,29 +203,40 @@ async function descargarMedia(
   mediaUrl
 ) {
 
-  const response =
+  try {
 
-    await axios.get(
-
-      mediaUrl,
-
-      {
-
-        responseType:
-          "arraybuffer",
-
-        headers: {
-
-          Authorization:
-            `Bearer ${TOKEN}`
-
+    const response =
+      await axios.get(
+        mediaUrl,
+        {
+          responseType:
+            "arraybuffer",
+          headers: {
+            Authorization:
+              `Bearer ${TOKEN}`
+          }
         }
+      );
 
-      }
+    return response.data;
 
+  } catch (err) {
+
+    console.log(
+      "ERROR DESCARGANDO"
     );
 
-  return response.data;
+    console.log(
+      err.response?.status
+    );
+
+    console.log(
+      err.response?.data
+        ?.toString?.()
+    );
+
+    throw err;
+  }
 
 }
 
