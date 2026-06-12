@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const supabase =
-  require("../lib/supabase");
+  require("../../lib/supabase");
 
 const crypto =
   require("crypto");
