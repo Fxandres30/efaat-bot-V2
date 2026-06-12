@@ -1,11 +1,5 @@
 require("dotenv").config();
 
-const supabase =
-  require("../../lib/supabase");
-
-const crypto =
-  require("crypto");
-
 const axios =
   require("axios");
 
@@ -15,7 +9,9 @@ const TOKEN =
 const PHONE_NUMBER_ID =
   process.env.PHONE_NUMBER_ID;
 
-// 🔥 ENVIAR TEXTO
+// =====================================
+// ENVIAR TEXTO
+// =====================================
 
 async function enviarTexto(
   numero,
@@ -51,12 +47,14 @@ async function enviarTexto(
 
 }
 
-// 🔥 ENVIAR IMAGEN
+// =====================================
+// ENVIAR IMAGEN
+// =====================================
 
 async function enviarImagen(
   numero,
   imagen,
-  caption
+  caption = ""
 ) {
 
   const response =
@@ -89,7 +87,9 @@ async function enviarImagen(
 
 }
 
-// 🔥 TEMPLATE
+// =====================================
+// TEMPLATE
+// =====================================
 
 async function enviarTemplateComprobante(
   numero
@@ -127,117 +127,8 @@ async function enviarTemplateComprobante(
 
 }
 
-// OBTENER URL REAL DE META
-
-async function obtenerMediaUrl(
-  mediaId
-) {
-
-  const response =
-    await axios.get(
-      `https://graph.facebook.com/v22.0/${mediaId}`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${TOKEN}`
-        }
-      }
-    );
-
-  return response.data.url;
-
-}
-
-// DESCARGAR MEDIA
-
-async function descargarMedia(
-mediaUrl
-) {
-
-try {
-
-const response =
-  await axios.get(
-    mediaUrl,
-    {
-      responseType:
-        "arraybuffer",
-      headers: {
-        Authorization:
-          `Bearer ${TOKEN}`
-      }
-    }
-  );
-
-return Buffer.from(
-  response.data
-);
-
-
-} catch (err) {
-
-console.log(
-  "ERROR DESCARGANDO MEDIA"
-);
-
-console.log(
-  "STATUS:",
-  err.response?.status
-);
-
-console.log(
-  "DATA:"
-);
-
-console.log(
-  err.response?.data?.toString?.()
-);
-
-throw err;
-
-}
-
-}
-
-// SUBIR A SUPABASE
-
-async function subirMediaASupabase(
-  buffer,
-  extension = "jpg"
-) {
-
-  const fileName =
-    `${Date.now()}-${crypto
-      .randomBytes(6)
-      .toString("hex")}.${extension}`;
-
-  const { error } =
-    await supabase.storage
-      .from("chat-media")
-      .upload(
-        fileName,
-        buffer
-      );
-
-  if (error)
-    throw error;
-
-  const { data } =
-    supabase.storage
-      .from("chat-media")
-      .getPublicUrl(
-        fileName
-      );
-
-  return data.publicUrl;
-
-}
-
 module.exports = {
   enviarTexto,
   enviarImagen,
-  enviarTemplateComprobante,
-  obtenerMediaUrl,
-  descargarMedia,
-  subirMediaASupabase
+  enviarTemplateComprobante
 };
