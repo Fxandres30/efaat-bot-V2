@@ -3,6 +3,13 @@ const router = require("express").Router();
 const supabase =
 require("../lib/supabase");
 
+const {
+  descargarMedia,
+  subirMediaASupabase
+} = require(
+  "../services/whatsapp/api"
+);
+
 // ======================================
 // VERIFY WEBHOOK
 // ======================================
@@ -112,19 +119,47 @@ try {
   // ==========================
   // IMAGEN
   // ==========================
+else if (tipo === "image") {
 
-  else if (tipo === "image") {
+  media_id =
+    message.image?.id;
 
-    media_id =
-      message.image?.id;
+  media_url =
+    message.image?.url || null;
+
+  mensaje =
+    message.image?.caption || "";
+
+  if (media_url) {
+
+    console.log(
+      "DESCARGANDO IMAGEN..."
+    );
+
+    const buffer =
+      await descargarMedia(
+        media_url
+      );
+
+    console.log(
+      "BUFFER:",
+      buffer?.length
+    );
 
     media_url =
-      message.image?.url || null;
+      await subirMediaASupabase(
+        buffer,
+        "jpg"
+      );
 
-    mensaje =
-      message.image?.caption || "";
+    console.log(
+      "URL SUPABASE:",
+      media_url
+    );
 
   }
+
+}
 
   // ==========================
   // VIDEO
