@@ -32,10 +32,9 @@ router.post("/", async (req, res) => {
         }
       );
 
-    // GUARDAR EN SUPABASE
+    // GUARDAR MENSAJE ENVIADO
 
     const {
-      data,
       error
     } = await supabase
       .from("messages")
@@ -43,16 +42,19 @@ router.post("/", async (req, res) => {
         {
           telefono,
           mensaje,
+          from_me: true,
           tipo: "text",
-          from_me: true
+          media_id: null,
+          media_url: null
         }
       ]);
 
-    console.log(
-      "SUPABASE:",
-      data,
-      error
-    );
+    if (error) {
+      console.log(
+        "SUPABASE ERROR:",
+        error
+      );
+    }
 
     res.json(response.data);
 
