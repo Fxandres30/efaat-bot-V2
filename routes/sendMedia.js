@@ -3,6 +3,9 @@ const multer = require("multer");
 const axios = require("axios");
 const fs = require("fs");
 
+const supabase =
+  require("../lib/supabase");
+
 const upload = multer({
   dest: "media/"
 });
@@ -15,10 +18,13 @@ router.post(
     try {
 
       const telefono =
-        req.body.telefono;
+  req.body.telefono;
 
-      const archivo =
-        req.file;
+const mensaje =
+  req.body.mensaje || "";
+
+const archivo =
+  req.file;
 
       if (!archivo) {
 
@@ -121,9 +127,25 @@ router.post(
 
       };
 
-      payload[type] = {
-        id: mediaId
-      };
+      if (
+  type === "image" ||
+  type === "video"
+) {
+
+  payload[type] = {
+    id: mediaId,
+    caption: mensaje
+  };
+
+}
+
+else {
+
+  payload[type] = {
+    id: mediaId
+  };
+
+}
 
       const response =
         await axios.post(
@@ -142,6 +164,25 @@ router.post(
           }
 
         );
+
+        await supabase
+  .from("messages")
+  .insert({
+
+    telefono,
+
+    mensaje,
+
+    from_me: true,
+
+    tipo: type,
+
+    media_id: mediaId,
+
+    media_url:
+      `/media/${mediaId}`
+
+  });
 
       return res.json({
         success: true,
