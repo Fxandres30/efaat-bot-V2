@@ -49,13 +49,79 @@ router.post(
 
     try {
 
-      const message =
-        req.body?.entry?.[0]
-          ?.changes?.[0]
-          ?.value?.messages?.[0];
+      console.log(
+        "WEBHOOK RECIBIDO"
+      );
 
       console.log(
-        "========= MENSAJE COMPLETO ========="
+        JSON.stringify(
+          req.body,
+          null,
+          2
+        )
+      );
+
+      const value =
+        req.body?.entry?.[0]
+          ?.changes?.[0]
+          ?.value;
+
+      if (!value) {
+
+        return res.sendStatus(200);
+
+      }
+
+      // ======================================
+      // STATUS MENSAJES SALIENTES
+      // ======================================
+
+      if (value.statuses) {
+
+        const status =
+          value.statuses[0];
+
+        console.log(
+          "STATUS RECIBIDO:"
+        );
+
+        console.log(
+          JSON.stringify(
+            status,
+            null,
+            2
+          )
+        );
+
+        /*
+        status.id
+        status.status
+
+        sent
+        delivered
+        read
+        failed
+        */
+
+        return res.sendStatus(200);
+
+      }
+
+      // ======================================
+      // MENSAJES ENTRANTES
+      // ======================================
+
+      const message =
+        value.messages?.[0];
+
+      if (!message) {
+
+        return res.sendStatus(200);
+
+      }
+
+      console.log(
+        "MENSAJE:"
       );
 
       console.log(
@@ -66,27 +132,21 @@ router.post(
         )
       );
 
-      console.log(
-        "===================================="
-      );
-
-      if (!message) {
-
-        return res.sendStatus(200);
-
-      }
-
       const telefono =
         message.from;
+
+      const wamid =
+        message.id;
 
       const tipo =
         message.type || "text";
 
       let mensaje = "";
       let media_id = null;
-      let media_url = null;
 
+      // ======================================
       // TEXTO
+      // ======================================
 
       if (tipo === "text") {
 
@@ -95,104 +155,99 @@ router.post(
 
       }
 
+      // ======================================
       // IMAGEN
+      // ======================================
 
       else if (tipo === "image") {
 
         media_id =
           message.image?.id || null;
 
-        media_url =
-          message.image?.url || null;
-
         mensaje =
           message.image?.caption || "";
 
       }
 
+      // ======================================
       // VIDEO
+      // ======================================
 
       else if (tipo === "video") {
 
         media_id =
           message.video?.id || null;
 
-        media_url =
-          message.video?.url || null;
-
         mensaje =
           message.video?.caption || "";
 
       }
 
+      // ======================================
       // AUDIO
+      // ======================================
 
       else if (tipo === "audio") {
 
         media_id =
           message.audio?.id || null;
 
-        media_url =
-          message.audio?.url || null;
-
       }
 
+      // ======================================
       // DOCUMENTO
+      // ======================================
 
       else if (tipo === "document") {
 
         media_id =
           message.document?.id || null;
 
-        media_url =
-          message.document?.url || null;
-
         mensaje =
           message.document?.filename || "";
 
       }
 
+      // ======================================
       // STICKER
+      // ======================================
 
       else if (tipo === "sticker") {
 
         media_id =
           message.sticker?.id || null;
 
-        media_url =
-          message.sticker?.url || null;
-
       }
 
       console.log({
         telefono,
+        wamid,
         tipo,
         mensaje,
-        media_id,
-        media_url
+        media_id
       });
 
-      const {
-        error
-      } = await supabase
-        .from("messages")
-        .insert({
+      const { error } =
+        await supabase
+          .from("messages")
+          .insert({
 
-          telefono,
-          mensaje,
-          tipo,
-          media_id,
-          media_url,
-          from_me: false
+            telefono,
+            wamid,
+            mensaje,
+            tipo,
+            media_id,
+            from_me: false
 
-        });
+          });
 
       if (error) {
 
         console.log(
-          "SUPABASE ERROR:",
-          error
+          "SUPABASE ERROR:"
         );
+
+        console.log(error);
 
       }
 
@@ -203,7 +258,7 @@ router.post(
     catch (err) {
 
       console.log(
-        "ERROR WEBHOOK"
+        "ERROR WEBHOOK:"
       );
 
       console.log(err);
