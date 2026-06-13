@@ -1,10 +1,13 @@
 const router = require("express").Router();
 const axios = require("axios");
-
-const supabase =
-  require("../lib/supabase");
+const supabase = require("../lib/supabase");
 
 router.post("/", async (req, res) => {
+
+  console.log("================================");
+  console.log("SEND MESSAGE RECIBIDO");
+  console.log(req.body);
+  console.log("================================");
 
   try {
 
@@ -12,6 +15,9 @@ router.post("/", async (req, res) => {
       telefono,
       mensaje
     } = req.body;
+
+    console.log("ENVIANDO A:", telefono);
+    console.log("MENSAJE:", mensaje);
 
     const response =
       await axios.post(
@@ -32,28 +38,31 @@ router.post("/", async (req, res) => {
         }
       );
 
-    // GUARDAR MENSAJE ENVIADO
+    console.log("META OK:");
+    console.log(response.data);
 
-    const {
-      error
-    } = await supabase
-      .from("messages")
-      .insert([
-        {
-          telefono,
-          mensaje,
-          from_me: true,
-          tipo: "text",
-          media_id: null,
-          media_url: null
-        }
-      ]);
+    const { error } =
+      await supabase
+        .from("messages")
+        .insert([
+          {
+            telefono,
+            mensaje,
+            from_me: true,
+            tipo: "text",
+            media_id: null,
+            media_url: null
+          }
+        ]);
 
     if (error) {
+
       console.log(
-        "SUPABASE ERROR:",
-        error
+        "SUPABASE ERROR:"
       );
+
+      console.log(error);
+
     }
 
     res.json(response.data);
@@ -62,9 +71,12 @@ router.post("/", async (req, res) => {
 
   catch (err) {
 
+    console.log("META ERROR:");
+
     console.log(
       err.response?.data ||
-      err.message
+      err.message ||
+      err
     );
 
     res.status(500).json({
