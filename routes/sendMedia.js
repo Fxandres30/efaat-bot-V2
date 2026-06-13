@@ -180,7 +180,7 @@ else {
     media_id: mediaId,
 
     media_url:
-      `/media/${mediaId}`
+      `https://efaat.com/media/${mediaId}`
 
   });
 
