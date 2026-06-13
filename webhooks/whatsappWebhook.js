@@ -270,5 +270,27 @@ router.post(
   }
 );
 
+const { data, error } =
+  await supabase
+    .from("messages")
+    .insert({
+      telefono,
+      wamid,
+      mensaje,
+      tipo,
+      media_id,
+      from_me: false
+    })
+    .select();
+
+console.log(
+  "INSERT RESULT:"
+);
+
+console.log({
+  data,
+  error
+});
+
 module.exports =
   router;
