@@ -62,6 +62,11 @@ app.use(
   require("./routes/sendMessage")
 );
 
+app.use(
+  "/meta/send-media",
+  require("./routes/sendMedia")
+);
+
 // 🔥 ENDPOINT
 
 app.post(
