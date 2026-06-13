@@ -6,7 +6,7 @@ router.post("/", async (req, res) => {
 
   console.log("================================");
   console.log("SEND MESSAGE RECIBIDO");
-  console.log(req.body);
+  console.log(JSON.stringify(req.body, null, 2));
   console.log("================================");
 
   try {
@@ -16,32 +16,62 @@ router.post("/", async (req, res) => {
       mensaje
     } = req.body;
 
-    console.log("ENVIANDO A:", telefono);
-    console.log("MENSAJE:", mensaje);
+    console.log("PHONE_NUMBER_ID:");
+    console.log(process.env.PHONE_NUMBER_ID);
+
+    console.log("TOKEN EXISTE:");
+    console.log(!!process.env.WHATSAPP_TOKEN);
+
+    console.log("ENVIANDO A:");
+    console.log(telefono);
+
+    console.log("MENSAJE:");
+    console.log(mensaje);
+
+    const payload = {
+      messaging_product: "whatsapp",
+      to: telefono,
+      type: "text",
+      text: {
+        body: mensaje
+      }
+    };
+
+    console.log("PAYLOAD:");
+    console.log(
+      JSON.stringify(
+        payload,
+        null,
+        2
+      )
+    );
 
     const response =
       await axios.post(
         `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`,
-        {
-          messaging_product: "whatsapp",
-          to: telefono,
-          type: "text",
-          text: {
-            body: mensaje
-          }
-        },
+        payload,
         {
           headers: {
             Authorization:
-              `Bearer ${process.env.WHATSAPP_TOKEN}`
+              `Bearer ${process.env.WHATSAPP_TOKEN}`,
+            "Content-Type":
+              "application/json"
           }
         }
       );
 
-    console.log("META OK:");
-    console.log(response.data);
+    console.log("================================");
+    console.log("META OK");
+    console.log(
+      JSON.stringify(
+        response.data,
+        null,
+        2
+      )
+    );
+    console.log("================================");
 
-    const { error } =
+    const insertResult =
       await supabase
         .from("messages")
         .insert([
@@ -53,17 +83,17 @@ router.post("/", async (req, res) => {
             media_id: null,
             media_url: null
           }
-        ]);
+        ])
+        .select();
 
-    if (error) {
-
-      console.log(
-        "SUPABASE ERROR:"
-      );
-
-      console.log(error);
-
-    }
+    console.log("SUPABASE INSERT:");
+    console.log(
+      JSON.stringify(
+        insertResult,
+        null,
+        2
+      )
+    );
 
     res.json(response.data);
 
@@ -71,13 +101,23 @@ router.post("/", async (req, res) => {
 
   catch (err) {
 
-    console.log("META ERROR:");
+    console.log("================================");
+    console.log("META ERROR");
+    console.log("================================");
 
     console.log(
-      err.response?.data ||
-      err.message ||
-      err
+      err.response?.status
     );
+
+    console.log(
+      JSON.stringify(
+        err.response?.data,
+        null,
+        2
+      )
+    );
+
+    console.log(err.message);
 
     res.status(500).json({
       error: true
