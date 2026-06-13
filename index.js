@@ -36,6 +36,11 @@ app.use(
 require("./routes/test-media")
 );
 
+app.use(
+  "/media",
+  require("./routes/media")
+);
+
 // 🔥 WEBHOOK
 
 app.use(
