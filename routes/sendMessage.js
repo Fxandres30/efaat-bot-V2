@@ -1,10 +1,10 @@
 const router = require("express").Router();
 const axios = require("axios");
 
-router.post("/", async (req, res) => {
+const supabase =
+  require("../lib/supabase");
 
-  console.log("BODY RECIBIDO:");
-  console.log(req.body);
+router.post("/", async (req, res) => {
 
   try {
 
@@ -12,9 +12,6 @@ router.post("/", async (req, res) => {
       telefono,
       mensaje
     } = req.body;
-
-    console.log("TELEFONO:", telefono);
-    console.log("MENSAJE:", mensaje);
 
     const response =
       await axios.post(
@@ -35,14 +32,34 @@ router.post("/", async (req, res) => {
         }
       );
 
-    console.log("META RESPONSE:");
-    console.log(response.data);
+    // GUARDAR EN SUPABASE
+
+    const {
+      data,
+      error
+    } = await supabase
+      .from("messages")
+      .insert([
+        {
+          telefono,
+          mensaje,
+          tipo: "text",
+          from_me: true
+        }
+      ]);
+
+    console.log(
+      "SUPABASE:",
+      data,
+      error
+    );
 
     res.json(response.data);
 
-  } catch (err) {
+  }
 
-    console.log("ERROR META:");
+  catch (err) {
+
     console.log(
       err.response?.data ||
       err.message
