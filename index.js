@@ -48,6 +48,11 @@ app.use(
   whatsappWebhook
 );
 
+app.use(
+  "/meta/send-message",
+  require("./routes/sendMessage")
+);
+
 // 🔥 ENDPOINT
 
 app.post(
