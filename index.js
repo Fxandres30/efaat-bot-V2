@@ -76,6 +76,12 @@ app.post(
         req.body
       );
 
+      console.log(
+  "BODY RECIBIDO:"
+);
+
+console.log(req.body);
+
       await enviarComprobanteAdmin(
         req.body
       );
