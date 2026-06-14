@@ -95,35 +95,54 @@ async function enviarTemplateComprobante(
   numero
 ) {
 
-  const response =
-    await axios.post(
+  try {
 
-      `https://graph.facebook.com/v22.0/${PHONE_NUMBER_ID}/messages`,
+    const response =
+      await axios.post(
 
-      {
-        messaging_product: "whatsapp",
-        to: numero,
-        type: "template",
-        template: {
-          name: "hello_world",
-          language: {
-            code: "en_US"
+        `https://graph.facebook.com/v22.0/${PHONE_NUMBER_ID}/messages`,
+
+        {
+          messaging_product: "whatsapp",
+          to: numero,
+          type: "template",
+          template: {
+            name: "hello_world",
+            language: {
+              code: "en_US"
+            }
+          }
+        },
+
+        {
+          headers: {
+            Authorization:
+              `Bearer ${TOKEN}`,
+            "Content-Type":
+              "application/json"
           }
         }
-      },
 
-      {
-        headers: {
-          Authorization:
-            `Bearer ${TOKEN}`,
-          "Content-Type":
-            "application/json"
-        }
-      }
+      );
 
+    return response.data;
+
+  }
+
+  catch (err) {
+
+    console.log(
+      "ERROR TEMPLATE:"
     );
 
-  return response.data;
+    console.log(
+      err.response?.data ||
+      err.message
+    );
+
+    throw err;
+
+  }
 
 }
 
