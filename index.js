@@ -14,25 +14,20 @@ const whatsappWebhook =
 const {
 
   enviarComprobanteAdmin,
-
   enviarConfirmacionCliente
 
 } = require(
   "./services/enviarComprobante"
 );
 
-// 🔥 PRIMERO CREAS APP
-
 const app =
   express();
 
-  app.use(
+app.use(
   cors({
     origin: "*"
   })
 );
-
-// 🔥 DESPUÉS USE
 
 app.use(
   express.json({
@@ -42,15 +37,13 @@ app.use(
 
 app.use(
   "/debug",
-require("./routes/test-media")
+  require("./routes/test-media")
 );
 
 app.use(
   "/media",
   require("./routes/media")
 );
-
-// 🔥 WEBHOOK
 
 app.use(
   "/meta",
@@ -67,8 +60,6 @@ app.use(
   require("./routes/sendMedia")
 );
 
-// 🔥 ENDPOINT
-
 app.post(
 
   "/enviar-comprobante",
@@ -77,12 +68,28 @@ app.post(
 
     try {
 
+      console.log(
+        "📥 NUEVO COMPROBANTE"
+      );
+
+      console.log(
+        req.body
+      );
+
       await enviarComprobanteAdmin(
         req.body
       );
 
+      console.log(
+        "✅ ADMIN OK"
+      );
+
       await enviarConfirmacionCliente(
         req.body
+      );
+
+      console.log(
+        "✅ CLIENTE OK"
       );
 
       res.json({
@@ -94,15 +101,36 @@ app.post(
     catch (err) {
 
       console.log(
+        "❌ ERROR EN /enviar-comprobante"
+      );
 
-  err.response?.data ||
-  err.message ||
-  err
+      console.log(
+        "MENSAJE:",
+        err?.message
+      );
 
-);
+      console.log(
+        "RESPUESTA META:"
+      );
+
+      console.dir(
+        err?.response?.data,
+        { depth: null }
+      );
+
+      console.dir(
+        err,
+        { depth: null }
+      );
 
       res.status(500).json({
-        ok: false
+
+        ok: false,
+
+        error:
+          err?.message ||
+          "Error desconocido"
+
       });
 
     }

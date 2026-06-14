@@ -7,13 +7,76 @@ const {
   "./whatsapp/api"
 );
 
+const ADMIN =
+  "573001112233"; // CAMBIA POR TU NÚMERO
+
 async function enviarComprobanteAdmin(
   data
 ) {
 
-  console.log(
-    "🔥 ADMIN OK"
-  );
+  try {
+
+    console.log(
+      "📩 ENVIANDO AL ADMIN"
+    );
+
+    const {
+
+      nombre,
+      telefono,
+      correo,
+      metodo,
+      cantidad,
+      total
+
+    } = data;
+
+    await enviarTexto(
+
+      ADMIN,
+
+`🛒 NUEVA COMPRA
+
+👤 Cliente:
+${nombre}
+
+📱 Teléfono:
+${telefono}
+
+📧 Correo:
+${correo || "No informado"}
+
+🎟️ Cantidad:
+${cantidad}
+
+💰 Total:
+$${Number(total)
+  .toLocaleString("es-CO")}
+
+🏦 Método:
+${metodo || "No informado"}
+
+📎 Comprobante recibido correctamente.`
+
+    );
+
+    console.log(
+      "✅ ADMIN OK"
+    );
+
+  }
+
+  catch (err) {
+
+    console.log(
+      "❌ ERROR ADMIN"
+    );
+
+    console.log(err);
+
+    throw err;
+
+  }
 
 }
 
@@ -21,63 +84,80 @@ async function enviarConfirmacionCliente(
   data
 ) {
 
-  console.log(data);
+  try {
 
-  const {
+    const {
 
-    nombre,
-    telefono
+      nombre,
+      telefono
 
-  } = data;
+    } = data;
 
-  const numeroCliente =
+    const numeroCliente =
 
-    telefono.includes("57")
+      telefono.startsWith("57")
 
-      ? telefono
+        ? telefono
 
-      : `57${telefono}`;
+        : `57${telefono}`;
 
-  console.log(
-    numeroCliente
-  );
+    console.log(
+      "📱 ENVIANDO A:",
+      numeroCliente
+    );
 
-  // 🔥 TEMPLATE OFICIAL
+    await enviarTemplateComprobante(
+      numeroCliente
+    );
 
-  await enviarTemplateComprobante(
+    console.log(
+      "✅ TEMPLATE OK"
+    );
 
-    numeroCliente
+    await new Promise(
 
-  );
+      resolve =>
 
-  // 🔥 ESPERA
+        setTimeout(
+          resolve,
+          3000
+        )
 
-  await new Promise(
+    );
 
-    resolve =>
+    await enviarTexto(
 
-      setTimeout(
-        resolve,
-        3000
-      )
+      numeroCliente,
 
-  );
-
-  // 🔥 MENSAJE LIBRE
-
-  await enviarTexto(
-
-    numeroCliente,
-
-`Hola 👋🏼
+`Hola ${nombre} 👋🏼
 
 Mucho gusto, bienvenid@ a EFAAT 💎
 
 ✨ Tu comprobante fue recibido correctamente.
 
+📋 Nuestro equipo validará tu pago.
+
 🙏🏼 Gracias por participar.`
 
-  );
+    );
+
+    console.log(
+      "✅ CLIENTE OK"
+    );
+
+  }
+
+  catch (err) {
+
+    console.log(
+      "❌ ERROR CLIENTE"
+    );
+
+    console.log(err);
+
+    throw err;
+
+  }
 
 }
 
