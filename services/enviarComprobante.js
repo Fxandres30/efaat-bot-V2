@@ -8,7 +8,7 @@ const {
 );
 
 const ADMIN =
-  "573001112233"; // CAMBIA POR TU NÚMERO
+  "573009760087"; // CAMBIA POR TU NÚMERO
 
 async function enviarComprobanteAdmin(
   data
