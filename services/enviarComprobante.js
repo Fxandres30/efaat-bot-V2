@@ -80,25 +80,18 @@ ${metodo || "No informado"}
 
 }
 
-async function enviarConfirmacionCliente(
-  data
-) {
+async function enviarConfirmacionCliente(data) {
 
   try {
 
     const {
-
       nombre,
       telefono
-
     } = data;
 
     const numeroCliente =
-
       telefono.startsWith("57")
-
         ? telefono
-
         : `57${telefono}`;
 
     console.log(
@@ -106,24 +99,13 @@ async function enviarConfirmacionCliente(
       numeroCliente
     );
 
-    await enviarTemplateComprobante(
-      numeroCliente
-    );
+    // await enviarTemplateComprobante(
+    //   numeroCliente
+    // );
 
-    console.log(
-      "✅ TEMPLATE OK"
-    );
-
-    await new Promise(
-
-      resolve =>
-
-        setTimeout(
-          resolve,
-          3000
-        )
-
-    );
+    // console.log(
+    //   "✅ TEMPLATE OK"
+    // );
 
     await enviarTexto(
 
