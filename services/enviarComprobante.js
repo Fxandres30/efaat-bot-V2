@@ -1,5 +1,6 @@
 const {
-  enviarTexto
+  enviarTexto,
+  enviarImagen
 } = require("./whatsapp/api");
 
 const ADMIN = "573226848246";
@@ -8,7 +9,9 @@ async function enviarComprobanteAdmin(data) {
 
   try {
 
-    console.log("📩 ENVIANDO AL ADMIN");
+    console.log(
+      "📩 ENVIANDO AL ADMIN"
+    );
 
     const {
       nombre,
@@ -16,12 +19,23 @@ async function enviarComprobanteAdmin(data) {
       correo,
       metodo,
       cantidad,
-      total
+      total,
+      comprobanteUrl
     } = data;
 
-    await enviarTexto(
+    if (!comprobanteUrl) {
+
+      throw new Error(
+        "No se recibió comprobanteUrl"
+      );
+
+    }
+
+    await enviarImagen(
 
       ADMIN,
+
+      comprobanteUrl,
 
 `🛒 NUEVA COMPRA
 
@@ -43,15 +57,23 @@ $${Number(total).toLocaleString("es-CO")}
 🏦 Método:
 ${metodo || "No informado"}
 
-📎 Comprobante recibido correctamente.`
+🕒 Estado:
+Pendiente de validación`
 
     );
 
-    console.log("✅ ADMIN OK");
+    console.log(
+      "✅ ADMIN OK"
+    );
 
-  } catch (err) {
+  }
 
-    console.log("❌ ERROR ADMIN");
+  catch (err) {
+
+    console.log(
+      "❌ ERROR ADMIN"
+    );
+
     console.log(err);
 
     throw err;
@@ -85,21 +107,30 @@ async function enviarConfirmacionCliente(data) {
 
 `Hola ${nombre} 👋🏼
 
-Mucho gusto, bienvenid@ a EFAAT 💎
+💎 Bienvenid@ a EFAAT
 
 ✨ Tu comprobante fue recibido correctamente.
 
 📋 Nuestro equipo validará tu pago.
 
-🙏🏼 Gracias por participar.`
+🎟️ Una vez aprobado, recibirás tus números automáticamente.
+
+🙏🏼 Gracias por participar y mucha suerte 🍀`
 
     );
 
-    console.log("✅ CLIENTE OK");
+    console.log(
+      "✅ CLIENTE OK"
+    );
 
-  } catch (err) {
+  }
 
-    console.log("❌ ERROR CLIENTE");
+  catch (err) {
+
+    console.log(
+      "❌ ERROR CLIENTE"
+    );
+
     console.log(err);
 
     throw err;
