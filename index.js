@@ -60,6 +60,38 @@ app.use(
   require("./routes/sendMedia")
 );
 
+app.use(
+  "/meta/send-message",
+  require("./routes/sendMessage")
+);
+
+app.use(
+  "/meta/send-media",
+  require("./routes/sendMedia")
+);
+
+/* NUEVAS */
+
+app.use(
+  "/meta/archive-chat",
+  require("./routes/archiveChat")
+);
+
+app.use(
+  "/meta/favorite-chat",
+  require("./routes/favoriteChat")
+);
+
+app.use(
+  "/meta/mute-chat",
+  require("./routes/muteChat")
+);
+
+app.use(
+  "/meta/delete-chat",
+  require("./routes/deleteChat")
+);
+
 app.post(
 
   "/enviar-comprobante",
