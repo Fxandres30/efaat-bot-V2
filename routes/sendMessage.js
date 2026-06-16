@@ -47,18 +47,18 @@ router.post("/", async (req, res) => {
     );
 
     const response =
-      await axios.post(
-        `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`,
-        payload,
-        {
-          headers: {
-            Authorization:
-              `Bearer ${process.env.WHATSAPP_TOKEN}`,
-            "Content-Type":
-              "application/json"
-          }
-        }
-      );
+  await axios.post(
+    `https://graph.facebook.com/v22.0/${process.env.PHONE_NUMBER_ID}/messages`,
+    payload,
+    {
+      headers: {
+        Authorization:
+          `Bearer ${process.env.WHATSAPP_TOKEN}`,
+        "Content-Type":
+          "application/json"
+      }
+    }
+  );
 
     console.log("================================");
     console.log("META OK");
@@ -72,19 +72,22 @@ router.post("/", async (req, res) => {
     console.log("================================");
 
     const insertResult =
-      await supabase
-        .from("messages")
-        .insert([
-          {
-            telefono,
-            mensaje,
-            from_me: true,
-            tipo: "text",
-            media_id: null,
-            media_url: null
-          }
-        ])
-        .select();
+  await supabase
+    .from("messages")
+    .insert([
+      {
+        telefono: waId,
+        mensaje,
+        from_me: true,
+        tipo: "text",
+        media_id: null,
+        media_url: null,
+        wamid:
+          response.data?.messages?.[0]?.id || null,
+        estado: "sent"
+      }
+    ])
+    .select();
 
     console.log("SUPABASE INSERT:");
     console.log(

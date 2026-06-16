@@ -78,35 +78,51 @@ router.post(
 
       if (value.statuses) {
 
-        const status =
-          value.statuses[0];
+  const status =
+    value.statuses[0];
 
-        console.log(
-          "STATUS RECIBIDO:"
-        );
+  console.log(
+    "STATUS RECIBIDO:"
+  );
 
-        console.log(
-          JSON.stringify(
-            status,
-            null,
-            2
-          )
-        );
+  console.log(
+    JSON.stringify(
+      status,
+      null,
+      2
+    )
+  );
 
-        /*
+  const { error } =
+    await supabase
+      .from("messages")
+      .update({
+        estado: status.status
+      })
+      .eq(
+        "wamid",
         status.id
-        status.status
+      );
 
-        sent
-        delivered
-        read
-        failed
-        */
+  if (error) {
 
-        return res.sendStatus(200);
+    console.log(
+      "ERROR ACTUALIZANDO ESTADO:"
+    );
 
-      }
+    console.log(error);
 
+  } else {
+
+    console.log(
+      `ESTADO ACTUALIZADO: ${status.status}`
+    );
+
+  }
+
+  return res.sendStatus(200);
+
+}
       // ======================================
       // MENSAJES ENTRANTES
       // ======================================
