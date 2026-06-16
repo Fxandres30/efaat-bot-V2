@@ -1,34 +1,22 @@
 const {
+  enviarTexto
+} = require("./whatsapp/api");
 
-  enviarTexto,
-  enviarTemplateComprobante
+const ADMIN = "573226848246";
 
-} = require(
-  "./whatsapp/api"
-);
-
-const ADMIN =
-  "573226848246"; // CAMBIA POR TU NÚMERO
-
-async function enviarComprobanteAdmin(
-  data
-) {
+async function enviarComprobanteAdmin(data) {
 
   try {
 
-    console.log(
-      "📩 ENVIANDO AL ADMIN"
-    );
+    console.log("📩 ENVIANDO AL ADMIN");
 
     const {
-
       nombre,
       telefono,
       correo,
       metodo,
       cantidad,
       total
-
     } = data;
 
     await enviarTexto(
@@ -50,8 +38,7 @@ ${correo || "No informado"}
 ${cantidad}
 
 💰 Total:
-$${Number(total)
-  .toLocaleString("es-CO")}
+$${Number(total).toLocaleString("es-CO")}
 
 🏦 Método:
 ${metodo || "No informado"}
@@ -60,18 +47,11 @@ ${metodo || "No informado"}
 
     );
 
-    console.log(
-      "✅ ADMIN OK"
-    );
+    console.log("✅ ADMIN OK");
 
-  }
+  } catch (err) {
 
-  catch (err) {
-
-    console.log(
-      "❌ ERROR ADMIN"
-    );
-
+    console.log("❌ ERROR ADMIN");
     console.log(err);
 
     throw err;
@@ -99,14 +79,6 @@ async function enviarConfirmacionCliente(data) {
       numeroCliente
     );
 
-    // await enviarTemplateComprobante(
-    //   numeroCliente
-    // );
-
-    // console.log(
-    //   "✅ TEMPLATE OK"
-    // );
-
     await enviarTexto(
 
       numeroCliente,
@@ -123,18 +95,11 @@ Mucho gusto, bienvenid@ a EFAAT 💎
 
     );
 
-    console.log(
-      "✅ CLIENTE OK"
-    );
+    console.log("✅ CLIENTE OK");
 
-  }
+  } catch (err) {
 
-  catch (err) {
-
-    console.log(
-      "❌ ERROR CLIENTE"
-    );
-
+    console.log("❌ ERROR CLIENTE");
     console.log(err);
 
     throw err;
@@ -144,8 +109,6 @@ Mucho gusto, bienvenid@ a EFAAT 💎
 }
 
 module.exports = {
-
   enviarComprobanteAdmin,
   enviarConfirmacionCliente
-
 };
