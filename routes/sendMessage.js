@@ -60,6 +60,10 @@ router.post("/", async (req, res) => {
     }
   );
 
+  const waId =
+  response.data?.contacts?.[0]?.wa_id
+  || telefono;
+
     console.log("================================");
     console.log("META OK");
     console.log(
