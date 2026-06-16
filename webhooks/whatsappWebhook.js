@@ -243,6 +243,67 @@ router.post(
         media_id
       });
 
+      // ======================================
+// CREAR CLIENTE SI NO EXISTE
+// ======================================
+
+const {
+  data: clienteExistente,
+  error: clienteError
+} = await supabase
+  .from("clientes")
+  .select("id")
+  .eq("telefono", telefono)
+  .maybeSingle();
+
+if (clienteError) {
+
+  console.log(
+    "ERROR BUSCANDO CLIENTE:"
+  );
+
+  console.log(clienteError);
+
+}
+
+if (!clienteExistente) {
+
+  const contacto =
+    value.contacts?.[0];
+
+  const nombre =
+    contacto?.profile?.name ||
+    "Sin nombre";
+
+  const {
+    error: insertClienteError
+  } = await supabase
+    .from("clientes")
+    .insert({
+      telefono,
+      nombre
+    });
+
+  if (insertClienteError) {
+
+    console.log(
+      "ERROR CREANDO CLIENTE:"
+    );
+
+    console.log(
+      insertClienteError
+    );
+
+  } else {
+
+    console.log(
+      `CLIENTE CREADO: ${telefono}`
+    );
+
+  }
+
+}
+
       const { data, error } =
   await supabase
     .from("messages")
