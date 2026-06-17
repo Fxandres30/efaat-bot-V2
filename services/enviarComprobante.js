@@ -182,7 +182,7 @@ Desde este chat también puedes:
 );
 
 console.log(
-  "✅ CLIENTE OK"
+  "✅ CLIENTE"
 );
 
 }
