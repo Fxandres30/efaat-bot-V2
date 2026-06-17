@@ -8,7 +8,6 @@ async function enviarComprobanteAdmin(data) {
 
 try {
 
-```
 console.log(
   "📩 ENVIANDO AL ADMIN"
 );
@@ -36,7 +35,6 @@ await enviarImagen(
   ADMIN,
 
   comprobanteUrl,
-```
 
 `🛒 NUEVA COMPRA
 
@@ -61,19 +59,16 @@ ${metodo || "No informado"}
 🕒 Estado:
 Pendiente de validación`
 
-```
 );
 
 console.log(
   "✅ ADMIN OK"
 );
-```
 
 }
 
 catch (err) {
 
-```
 console.log(
   "❌ ERROR ADMIN"
 );
@@ -81,7 +76,6 @@ console.log(
 console.log(err);
 
 throw err;
-```
 
 }
 
