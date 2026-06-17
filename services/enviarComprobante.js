@@ -1,8 +1,13 @@
 const {
-enviarImagen
+enviarImagen,
+enviarTexto
 } = require("./whatsapp/api");
 
 const ADMIN = "573009760140";
+
+// =====================================
+// ENVIAR COMPROBANTE AL ADMIN
+// =====================================
 
 async function enviarComprobanteAdmin(data) {
 
@@ -36,7 +41,7 @@ await enviarImagen(
 
   comprobanteUrl,
 
-`🛒 NUEVA COMPRA
+`🛒 NUEVA COMPRA RECIBIDA
 
 👤 Cliente:
 ${nombre}
@@ -47,17 +52,19 @@ ${telefono}
 📧 Correo:
 ${correo || "No informado"}
 
-🎟️ Cantidad:
+🎟️ Cantidad de números:
 ${cantidad}
 
-💰 Total:
+💰 Valor reportado:
 $${Number(total).toLocaleString("es-CO")}
 
-🏦 Método:
+🏦 Método de pago:
 ${metodo || "No informado"}
 
-🕒 Estado:
-Pendiente de validación`
+📋 Estado:
+PENDIENTE DE VALIDACIÓN ⏳
+
+🕒 Revisar comprobante y aprobar compra.`
 
 );
 
@@ -80,6 +87,10 @@ throw err;
 }
 
 }
+
+// =====================================
+// CONFIRMACIÓN AL CLIENTE
+// =====================================
 
 async function enviarConfirmacionCliente(data) {
 
@@ -112,6 +123,8 @@ console.log(
   numeroCliente
 );
 
+// MENSAJE 1 (CON IMAGEN)
+
 await enviarImagen(
 
   numeroCliente,
@@ -120,24 +133,51 @@ await enviarImagen(
 
 `Hola ${nombre} 👋🏼
 
-💎 Bienvenid@ a EFAAT
+Hemos recibido correctamente tu comprobante de pago. ✅
 
-✨ Tu comprobante fue recibido correctamente.
-
-🎟️ Cantidad:
+🎟️ Cantidad de números:
 ${cantidad}
 
-💰 Total:
+💰 Valor reportado:
 $${Number(total).toLocaleString("es-CO")}
 
-🏦 Método:
+🏦 Método de pago:
 ${metodo || "No informado"}
 
-📋 Nuestro equipo validará tu pago.
+📋 Estado actual:
+PENDIENTE DE VALIDACIÓN ⏳
 
-🎯 Una vez aprobado recibirás tus números automáticamente.
+Nuestro equipo ya se encuentra verificando la información enviada. ✍️
 
-🙏🏼 Gracias por participar y mucha suerte 🍀`
+🎯 Una vez aprobado el pago, recibirás automáticamente tus números en este mismo chat.
+
+📝 No es necesario enviar nuevamente el comprobante.
+
+☘️ Gracias por participar con EFAAT.`
+
+);
+
+// MENSAJE 2 (CONTINUAR CONVERSACIÓN)
+
+await enviarTexto(
+
+  numeroCliente,
+
+`🚀 Mientras validamos tu pago queremos darte la bienvenida a EFAAT.
+
+Desde este chat también puedes:
+
+👥 Escribir GRUPOS para acceder a nuestros grupos oficiales.
+
+🎟️ Escribir MIS NÚMEROS para consultar tus participaciones.
+
+🎁 Escribir PROMOS para conocer promociones y eventos disponibles.
+
+🌐 Escribir SITIO WEB para visitar nuestra plataforma.
+
+🤝 Estamos trabajando para brindarte la mejor experiencia posible.
+
+¡Mucha suerte! 🍀`
 
 );
 
@@ -156,6 +196,7 @@ console.log(
 console.log(err);
 
 throw err;
+
 
 }
 
