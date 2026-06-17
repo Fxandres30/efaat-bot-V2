@@ -3,7 +3,7 @@ require("dotenv").config();
 const axios = require("axios");
 
 const supabase =
-  require("../lib/supabase");
+  require("../../lib/supabase");
 
 const TOKEN =
   process.env.WHATSAPP_TOKEN;
