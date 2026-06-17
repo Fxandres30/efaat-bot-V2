@@ -1,46 +1,35 @@
-const router = require("express").Router();
+const router =
+  require("express").Router();
 
-const supabase =
-  require("../lib/supabase");
+const verifyWebhook =
+  require("./helpers/verifyWebhook");
+
+const parseMessage =
+  require("./helpers/parseMessage");
+
+const crearCliente =
+  require("./services/clientes");
+
+const guardarMensaje =
+  require("./services/mensajes");
+
+const actualizarEstado =
+  require("./services/estados");
+
+const ejecutarComando =
+  require("./commands");
 
 // ======================================
-// VERIFY WEBHOOK
+// VERIFY
 // ======================================
 
 router.get(
   "/webhook",
-  (req, res) => {
-
-    const verifyToken =
-      "efaat_verify";
-
-    const mode =
-      req.query["hub.mode"];
-
-    const token =
-      req.query["hub.verify_token"];
-
-    const challenge =
-      req.query["hub.challenge"];
-
-    if (
-      mode === "subscribe" &&
-      token === verifyToken
-    ) {
-
-      return res
-        .status(200)
-        .send(challenge);
-
-    }
-
-    return res.sendStatus(403);
-
-  }
+  verifyWebhook
 );
 
 // ======================================
-// RECEIVE WEBHOOK
+// RECEIVE
 // ======================================
 
 router.post(
@@ -53,14 +42,6 @@ router.post(
         "WEBHOOK RECIBIDO"
       );
 
-      console.log(
-        JSON.stringify(
-          req.body,
-          null,
-          2
-        )
-      );
-
       const value =
         req.body?.entry?.[0]
           ?.changes?.[0]
@@ -68,85 +49,44 @@ router.post(
 
       if (!value) {
 
-        return res.sendStatus(200);
+        return res.sendStatus(
+          200
+        );
 
       }
 
-      // ======================================
-      // STATUS MENSAJES SALIENTES
-      // ======================================
+      // ======================
+      // STATUS
+      // ======================
 
-      if (value.statuses) {
+      if (
+        value.statuses
+      ) {
 
-  const status =
-    value.statuses[0];
+        await actualizarEstado(
+          value.statuses[0]
+        );
 
-  console.log(
-    "STATUS RECIBIDO:"
-  );
+        return res.sendStatus(
+          200
+        );
 
-  console.log(
-    JSON.stringify(
-      status,
-      null,
-      2
-    )
-  );
+      }
 
-  const { error } =
-    await supabase
-      .from("messages")
-      .update({
-        estado: status.status
-      })
-      .eq(
-        "wamid",
-        status.id
-      );
-
-  if (error) {
-
-    console.log(
-      "ERROR ACTUALIZANDO ESTADO:"
-    );
-
-    console.log(error);
-
-  } else {
-
-    console.log(
-      `ESTADO ACTUALIZADO: ${status.status}`
-    );
-
-  }
-
-  return res.sendStatus(200);
-
-}
-      // ======================================
-      // MENSAJES ENTRANTES
-      // ======================================
+      // ======================
+      // MESSAGE
+      // ======================
 
       const message =
         value.messages?.[0];
 
       if (!message) {
 
-        return res.sendStatus(200);
+        return res.sendStatus(
+          200
+        );
 
       }
-
-      console.log(
-        "MENSAJE:"
-      );
-
-      console.log(
-        JSON.stringify(
-          message,
-          null,
-          2
-        )
-      );
 
       const telefono =
         message.from;
@@ -154,179 +94,52 @@ router.post(
       const wamid =
         message.id;
 
-      const tipo =
-        message.type || "text";
+      const {
 
-      let mensaje = "";
-      let media_id = null;
-
-      // ======================================
-      // TEXTO
-      // ======================================
-
-      if (tipo === "text") {
-
-        mensaje =
-          message.text?.body || "";
-
-      }
-
-      // ======================================
-      // IMAGEN
-      // ======================================
-
-      else if (tipo === "image") {
-
-        media_id =
-          message.image?.id || null;
-
-        mensaje =
-          message.image?.caption || "";
-
-      }
-
-      // ======================================
-      // VIDEO
-      // ======================================
-
-      else if (tipo === "video") {
-
-        media_id =
-          message.video?.id || null;
-
-        mensaje =
-          message.video?.caption || "";
-
-      }
-
-      // ======================================
-      // AUDIO
-      // ======================================
-
-      else if (tipo === "audio") {
-
-        media_id =
-          message.audio?.id || null;
-
-      }
-
-      // ======================================
-      // DOCUMENTO
-      // ======================================
-
-      else if (tipo === "document") {
-
-        media_id =
-          message.document?.id || null;
-
-        mensaje =
-          message.document?.filename || "";
-
-      }
-
-      // ======================================
-      // STICKER
-      // ======================================
-
-      else if (tipo === "sticker") {
-
-        media_id =
-          message.sticker?.id || null;
-
-      }
-
-      console.log({
-        telefono,
-        wamid,
         tipo,
         mensaje,
         media_id
-      });
 
-      // ======================================
-// CREAR CLIENTE SI NO EXISTE
-// ======================================
+      } = parseMessage(
+        message
+      );
 
-const {
-  data: clienteExistente,
-  error: clienteError
-} = await supabase
-  .from("clientes")
-  .select("id")
-  .eq("telefono", telefono)
-  .maybeSingle();
+      const comando =
+        await ejecutarComando(
 
-if (clienteError) {
+          telefono,
+          mensaje
 
-  console.log(
-    "ERROR BUSCANDO CLIENTE:"
-  );
+        );
 
-  console.log(clienteError);
+      if (comando) {
 
-}
+        return res.sendStatus(
+          200
+        );
 
-if (!clienteExistente) {
+      }
 
-  const contacto =
-    value.contacts?.[0];
+      await crearCliente(
 
-  const nombre =
-    contacto?.profile?.name ||
-    "Sin nombre";
+        telefono,
+        value.contacts?.[0]
 
-  const {
-    error: insertClienteError
-  } = await supabase
-    .from("clientes")
-    .insert({
-      telefono,
-      nombre
-    });
+      );
 
-  if (insertClienteError) {
+      const {
+        error
+      } =
+        await guardarMensaje({
 
-    console.log(
-      "ERROR CREANDO CLIENTE:"
-    );
+          telefono,
+          wamid,
+          mensaje,
+          tipo,
+          media_id,
+          from_me: false
 
-    console.log(
-      insertClienteError
-    );
-
-  } else {
-
-    console.log(
-      `CLIENTE CREADO: ${telefono}`
-    );
-
-  }
-
-}
-
-      const { data, error } =
-  await supabase
-    .from("messages")
-    .insert({
-
-      telefono,
-      wamid,
-      mensaje,
-      tipo,
-      media_id,
-      from_me: false
-
-    })
-    .select();
-
-console.log(
-  "INSERT RESULT:"
-);
-
-console.log({
-  data,
-  error
-});
+        });
 
       if (error) {
 
@@ -338,7 +151,9 @@ console.log({
 
       }
 
-      return res.sendStatus(200);
+      return res.sendStatus(
+        200
+      );
 
     }
 
@@ -350,13 +165,14 @@ console.log({
 
       console.log(err);
 
-      return res.sendStatus(500);
+      return res.sendStatus(
+        500
+      );
 
     }
 
   }
 );
-
 
 module.exports =
   router;
