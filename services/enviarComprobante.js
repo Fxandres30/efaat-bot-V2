@@ -1,41 +1,42 @@
 const {
-  enviarTexto,
-  enviarImagen
+enviarImagen
 } = require("./whatsapp/api");
 
 const ADMIN = "573226848246";
 
 async function enviarComprobanteAdmin(data) {
 
-  try {
+try {
 
-    console.log(
-      "📩 ENVIANDO AL ADMIN"
-    );
+```
+console.log(
+  "📩 ENVIANDO AL ADMIN"
+);
 
-    const {
-      nombre,
-      telefono,
-      correo,
-      metodo,
-      cantidad,
-      total,
-      comprobanteUrl
-    } = data;
+const {
+  nombre,
+  telefono,
+  correo,
+  metodo,
+  cantidad,
+  total,
+  comprobanteUrl
+} = data;
 
-    if (!comprobanteUrl) {
+if (!comprobanteUrl) {
 
-      throw new Error(
-        "No se recibió comprobanteUrl"
-      );
+  throw new Error(
+    "No se recibió comprobanteUrl"
+  );
 
-    }
+}
 
-    await enviarImagen(
+await enviarImagen(
 
-      ADMIN,
+  ADMIN,
 
-      comprobanteUrl,
+  comprobanteUrl,
+```
 
 `🛒 NUEVA COMPRA
 
@@ -60,50 +61,68 @@ ${metodo || "No informado"}
 🕒 Estado:
 Pendiente de validación`
 
-    );
+```
+);
 
-    console.log(
-      "✅ ADMIN OK"
-    );
+console.log(
+  "✅ ADMIN OK"
+);
+```
 
-  }
+}
 
-  catch (err) {
+catch (err) {
 
-    console.log(
-      "❌ ERROR ADMIN"
-    );
+```
+console.log(
+  "❌ ERROR ADMIN"
+);
 
-    console.log(err);
+console.log(err);
 
-    throw err;
+throw err;
+```
 
-  }
+}
 
 }
 
 async function enviarConfirmacionCliente(data) {
 
-  try {
+try {
 
-    const {
-      nombre,
-      telefono
-    } = data;
+const {
+  nombre,
+  telefono,
+  metodo,
+  cantidad,
+  total,
+  comprobanteUrl
+} = data;
 
-    const numeroCliente =
-      telefono.startsWith("57")
-        ? telefono
-        : `57${telefono}`;
+if (!comprobanteUrl) {
 
-    console.log(
-      "📱 ENVIANDO A:",
-      numeroCliente
-    );
+  throw new Error(
+    "No se recibió comprobanteUrl"
+  );
 
-    await enviarTexto(
+}
 
-      numeroCliente,
+const numeroCliente =
+  telefono.startsWith("57")
+    ? telefono
+    : `57${telefono}`;
+
+console.log(
+  "📱 ENVIANDO A:",
+  numeroCliente
+);
+
+await enviarImagen(
+
+  numeroCliente,
+
+  comprobanteUrl,
 
 `Hola ${nombre} 👋🏼
 
@@ -111,35 +130,44 @@ async function enviarConfirmacionCliente(data) {
 
 ✨ Tu comprobante fue recibido correctamente.
 
+🎟️ Cantidad:
+${cantidad}
+
+💰 Total:
+$${Number(total).toLocaleString("es-CO")}
+
+🏦 Método:
+${metodo || "No informado"}
+
 📋 Nuestro equipo validará tu pago.
 
-🎟️ Una vez aprobado, recibirás tus números automáticamente.
+🎯 Una vez aprobado recibirás tus números automáticamente.
 
 🙏🏼 Gracias por participar y mucha suerte 🍀`
 
-    );
+);
 
-    console.log(
-      "✅ CLIENTE OK"
-    );
+console.log(
+  "✅ CLIENTE OK"
+);
 
-  }
+}
 
-  catch (err) {
+catch (err) {
 
-    console.log(
-      "❌ ERROR CLIENTE"
-    );
+console.log(
+  "❌ ERROR CLIENTE"
+);
 
-    console.log(err);
+console.log(err);
 
-    throw err;
+throw err;
 
-  }
+}
 
 }
 
 module.exports = {
-  enviarComprobanteAdmin,
-  enviarConfirmacionCliente
+enviarComprobanteAdmin,
+enviarConfirmacionCliente
 };
