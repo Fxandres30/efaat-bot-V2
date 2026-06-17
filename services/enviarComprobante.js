@@ -2,7 +2,7 @@ const {
 enviarImagen
 } = require("./whatsapp/api");
 
-const ADMIN = "573226848246";
+const ADMIN = "573009760140";
 
 async function enviarComprobanteAdmin(data) {
 
