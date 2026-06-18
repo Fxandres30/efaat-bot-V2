@@ -72,107 +72,118 @@ router.post(
         );
 
       }
+  // ======================
+  // MESSAGE
+  // ======================
 
-      // ======================
-      // MESSAGE
-      // ======================
+  const message =
+    value.messages?.[0];
 
-      const message =
-        value.messages?.[0];
+  if (!message) {
 
-      if (!message) {
-
-        return res.sendStatus(
-          200
-        );
-
-      }
-
-      const telefono =
-        message.from;
-
-      const wamid =
-        message.id;
-
-      const {
-
-        tipo,
-        mensaje,
-        media_id
-
-      } = parseMessage(
-        message
-      );
-
-      const comando =
-        await ejecutarComando(
-
-          telefono,
-          mensaje
-
-        );
-
-      if (comando) {
-
-        return res.sendStatus(
-          200
-        );
-
-      }
-
-      await crearCliente(
-
-        telefono,
-        value.contacts?.[0]
-
-      );
-
-      const {
-        error
-      } =
-        await guardarMensaje({
-
-          telefono,
-          wamid,
-          mensaje,
-          tipo,
-          media_id,
-          from_me: false
-
-        });
-
-      if (error) {
-
-        console.log(
-          "SUPABASE ERROR:"
-        );
-
-        console.log(error);
-
-      }
-
-      return res.sendStatus(
-        200
-      );
-
-    }
-
-    catch (err) {
-
-      console.log(
-        "ERROR WEBHOOK:"
-      );
-
-      console.log(err);
-
-      return res.sendStatus(
-        500
-      );
-
-    }
+    return res.sendStatus(
+      200
+    );
 
   }
+
+  const telefono =
+    message.from;
+
+  const wamid =
+    message.id;
+
+  const {
+
+    tipo,
+    mensaje,
+    media_id
+
+  } = parseMessage(
+    message
+  );
+
+  // ======================
+  // CLIENTE
+  // ======================
+
+  await crearCliente(
+
+    telefono,
+    value.contacts?.[0]
+
+  );
+
+  // ======================
+  // GUARDAR SIEMPRE
+  // ======================
+
+  const {
+    error
+  } =
+    await guardarMensaje({
+
+      telefono,
+      wamid,
+      mensaje,
+      tipo,
+      media_id,
+      from_me: false
+
+    });
+
+  if (error) {
+
+    console.log(
+      "SUPABASE ERROR:"
+    );
+
+    console.log(error);
+
+  }
+
+  // ======================
+  // COMANDOS
+  // ======================
+
+  const comando =
+    await ejecutarComando(
+
+      telefono,
+      mensaje
+
+    );
+
+  if (comando) {
+
+    return res.sendStatus(
+      200
+    );
+
+  }
+
+  return res.sendStatus(
+    200
+  );
+
+}
+
+catch (err) {
+
+  console.log(
+    "ERROR WEBHOOK:"
+  );
+
+  console.log(err);
+
+  return res.sendStatus(
+    500
+  );
+
+}
+
+}
 );
 
 module.exports =
-  router;
+router;
