@@ -43,26 +43,19 @@ await enviarImagen(
 
 `🛒 NUEVA COMPRA RECIBIDA
 
-👤 Cliente:
-${nombre}
+👤 Cliente: ${nombre}
 
-📱 Teléfono:
-${telefono}
+📱 Teléfono: ${telefono}
 
-📧 Correo:
-${correo || "No informado"}
+📧 Correo: ${correo || "No informado"}
 
-🎟️ Cantidad de números:
-${cantidad}
+🎟️ Cantidad de números: ${cantidad}
 
-💰 Valor reportado:
-$${Number(total).toLocaleString("es-CO")}
+💰 Valor reportado: $${Number(total).toLocaleString("es-CO")}
 
-🏦 Método de pago:
-${metodo || "No informado"}
+🏦 Método de pago: ${metodo || "No informado"}
 
-📋 Estado:
-PENDIENTE DE VALIDACIÓN ⏳
+📋 Estado: PENDIENTE DE VALIDACIÓN ⏳
 
 🕒 Revisar comprobante y aprobar compra.`
 
@@ -131,29 +124,19 @@ await enviarImagen(
 
   comprobanteUrl,
 
-`Hola ${nombre} 👋🏼
+`*Hola ${nombre} 👋🏼*
+*Hemos recibido correctamente tu comprobante de pago. ✅*
 
-Hemos recibido correctamente tu comprobante de pago. ✅
+🎟️ *Cantidad de números:* ${cantidad}
+💰 *Valor reportado:* $${Number(total).toLocaleString("es-CO")}
+🏦 *Método de pago:* ${metodo || "No informado"}
+📋 *Estado actual:* PENDIENTE DE VALIDACIÓN ⏳
 
-🎟️ Cantidad de números:
-${cantidad}
+*Nuestro equipo ya se encuentra verificando la información enviada. ✍️*
+*Una vez aprobado el pago, recibirás automáticamente tus números en este mismo chat.* 🎯 
 
-💰 Valor reportado:
-$${Number(total).toLocaleString("es-CO")}
-
-🏦 Método de pago:
-${metodo || "No informado"}
-
-📋 Estado actual:
-PENDIENTE DE VALIDACIÓN ⏳
-
-Nuestro equipo ya se encuentra verificando la información enviada. ✍️
-
-🎯 Una vez aprobado el pago, recibirás automáticamente tus números en este mismo chat.
-
-📝 No es necesario enviar nuevamente el comprobante.
-
-☘️ Gracias por participar con EFAAT.`
+*No es necesario enviar nuevamente el comprobante.* 📝
+Gracias por participar con EFAAT. 🍀*`
 
 );
 
