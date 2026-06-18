@@ -13,7 +13,7 @@ const comandoMisNumeros =
 const {
   enviarTexto
 } = require(
-  "../../whatsapp/api"
+  "../../services/whatsapp/api"
 );
 
 module.exports =
