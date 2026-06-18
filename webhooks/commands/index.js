@@ -1,11 +1,14 @@
-const {
-  comandoGrupos,
-  comandoPromos,
-  comandoSitioWeb,
-  comandoMisNumeros
-} = require(
-  "../../comandos"
-);
+const comandoGrupos =
+  require("./grupos");
+
+const comandoPromos =
+  require("./promos");
+
+const comandoSitioWeb =
+  require("./sitioWeb");
+
+const comandoMisNumeros =
+  require("./misNumeros");
 
 const {
   enviarTexto
@@ -24,9 +27,7 @@ module.exports =
         .trim()
         .toLowerCase();
 
-    if (
-      texto === "grupos"
-    ) {
+    if (texto === "grupos") {
 
       await enviarTexto(
         telefono,
@@ -37,9 +38,7 @@ module.exports =
 
     }
 
-    if (
-      texto === "promos"
-    ) {
+    if (texto === "promos") {
 
       await enviarTexto(
         telefono,
@@ -50,9 +49,7 @@ module.exports =
 
     }
 
-    if (
-      texto === "sitio web"
-    ) {
+    if (texto === "sitio web") {
 
       await enviarTexto(
         telefono,
@@ -64,10 +61,8 @@ module.exports =
     }
 
     if (
-      texto ===
-        "mis numeros" ||
-      texto ===
-        "mis números"
+      texto === "mis numeros" ||
+      texto === "mis números"
     ) {
 
       await enviarTexto(
