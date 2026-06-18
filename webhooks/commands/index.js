@@ -49,7 +49,7 @@ module.exports =
 
     }
 
-    if (texto === "sitio web") {
+    if (texto === "sitio web Oficial") {
 
       await enviarTexto(
         telefono,
