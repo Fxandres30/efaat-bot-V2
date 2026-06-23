@@ -165,24 +165,46 @@ else {
 
         );
 
-        await supabase
-  .from("messages")
-  .insert({
+        const wamid =
+  response.data?.messages?.[0]?.id || null;
 
-    telefono,
+const insertResult =
+  await supabase
+    .from("messages")
+    .insert({
 
-    mensaje,
+      telefono,
 
-    from_me: true,
+      mensaje,
 
-    tipo: type,
+      from_me: true,
 
-    media_id: mediaId,
+      tipo: type,
 
-    media_url:
-      `https://efaat.com/media/${mediaId}`
+      media_id: mediaId,
 
-  });
+      media_url:
+        `https://efaat.com/media/${mediaId}`,
+
+      wamid,
+
+      estado: "sent",
+
+      leido: false
+
+    });
+
+console.log(
+  "MEDIA INSERT:"
+);
+
+console.log(
+  JSON.stringify(
+    insertResult,
+    null,
+    2
+  )
+);
 
       return res.json({
         success: true,
