@@ -78,6 +78,16 @@ module.exports =
 
     }
 
+    else if (
+  tipo === "contacts"
+) {
+
+  mensaje = JSON.stringify(
+    message.contacts?.[0] || {}
+  );
+
+}
+
     return {
 
       tipo,
