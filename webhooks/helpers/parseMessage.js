@@ -22,8 +22,15 @@ module.exports = function parseMessage(
       media_id =
         message.image?.id || null;
 
-      mensaje =
-        message.image?.caption || "";
+      mensaje = JSON.stringify({
+
+        caption:
+          message.image?.caption || "",
+
+        mime_type:
+          message.image?.mime_type || ""
+
+      });
 
       break;
 
@@ -32,8 +39,15 @@ module.exports = function parseMessage(
       media_id =
         message.video?.id || null;
 
-      mensaje =
-        message.video?.caption || "";
+      mensaje = JSON.stringify({
+
+        caption:
+          message.video?.caption || "",
+
+        mime_type:
+          message.video?.mime_type || ""
+
+      });
 
       break;
 
@@ -43,8 +57,10 @@ module.exports = function parseMessage(
         message.audio?.id || null;
 
       mensaje = JSON.stringify({
+
         mime_type:
-          message.audio?.mime_type
+          message.audio?.mime_type || ""
+
       });
 
       break;
@@ -55,8 +71,10 @@ module.exports = function parseMessage(
         message.sticker?.id || null;
 
       mensaje = JSON.stringify({
+
         animated:
           message.sticker?.animated || false
+
       });
 
       break;
@@ -69,10 +87,10 @@ module.exports = function parseMessage(
       mensaje = JSON.stringify({
 
         filename:
-          message.document?.filename,
+          message.document?.filename || "",
 
         mime_type:
-          message.document?.mime_type
+          message.document?.mime_type || ""
 
       });
 
@@ -80,9 +98,10 @@ module.exports = function parseMessage(
 
     case "contacts":
 
-      mensaje = JSON.stringify(
-        message.contacts || []
-      );
+      mensaje =
+        JSON.stringify(
+          message.contacts || []
+        );
 
       break;
 
@@ -91,16 +110,16 @@ module.exports = function parseMessage(
       mensaje = JSON.stringify({
 
         latitude:
-          message.location?.latitude,
+          message.location?.latitude || null,
 
         longitude:
-          message.location?.longitude,
+          message.location?.longitude || null,
 
         name:
-          message.location?.name,
+          message.location?.name || "",
 
         address:
-          message.location?.address
+          message.location?.address || ""
 
       });
 
@@ -115,9 +134,10 @@ module.exports = function parseMessage(
 
     case "interactive":
 
-      mensaje = JSON.stringify(
-        message.interactive || {}
-      );
+      mensaje =
+        JSON.stringify(
+          message.interactive || {}
+        );
 
       break;
 
@@ -126,10 +146,10 @@ module.exports = function parseMessage(
       mensaje = JSON.stringify({
 
         emoji:
-          message.reaction?.emoji,
+          message.reaction?.emoji || "",
 
         message_id:
-          message.reaction?.message_id
+          message.reaction?.message_id || ""
 
       });
 
@@ -137,9 +157,8 @@ module.exports = function parseMessage(
 
     default:
 
-      mensaje = JSON.stringify(
-        message
-      );
+      mensaje =
+        JSON.stringify(message);
 
       break;
 
