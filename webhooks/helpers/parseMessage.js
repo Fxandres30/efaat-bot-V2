@@ -1,99 +1,156 @@
-module.exports =
-  function parseMessage(
-    message
-  ) {
+module.exports = function parseMessage(
+  message
+) {
 
-    const tipo =
-      message.type || "text";
+  const tipo =
+    message.type || "text";
 
-    let mensaje = "";
-    let media_id = null;
+  let mensaje = "";
+  let media_id = null;
 
-    if (tipo === "text") {
+  switch (tipo) {
+
+    case "text":
 
       mensaje =
         message.text?.body || "";
 
-    }
+      break;
 
-    else if (
-      tipo === "image"
-    ) {
+    case "image":
 
       media_id =
-        message.image?.id ||
-        null;
+        message.image?.id || null;
 
       mensaje =
-        message.image?.caption ||
-        "";
+        message.image?.caption || "";
 
-    }
+      break;
 
-    else if (
-      tipo === "video"
-    ) {
+    case "video":
 
       media_id =
-        message.video?.id ||
-        null;
+        message.video?.id || null;
 
       mensaje =
-        message.video?.caption ||
-        "";
+        message.video?.caption || "";
 
-    }
+      break;
 
-    else if (
-      tipo === "audio"
-    ) {
+    case "audio":
 
       media_id =
-        message.audio?.id ||
-        null;
+        message.audio?.id || null;
 
-    }
+      mensaje = JSON.stringify({
+        mime_type:
+          message.audio?.mime_type
+      });
 
-    else if (
-      tipo === "document"
-    ) {
+      break;
+
+    case "sticker":
 
       media_id =
-        message.document?.id ||
-        null;
+        message.sticker?.id || null;
+
+      mensaje = JSON.stringify({
+        animated:
+          message.sticker?.animated || false
+      });
+
+      break;
+
+    case "document":
+
+      media_id =
+        message.document?.id || null;
+
+      mensaje = JSON.stringify({
+
+        filename:
+          message.document?.filename,
+
+        mime_type:
+          message.document?.mime_type
+
+      });
+
+      break;
+
+    case "contacts":
+
+      mensaje = JSON.stringify(
+        message.contacts || []
+      );
+
+      break;
+
+    case "location":
+
+      mensaje = JSON.stringify({
+
+        latitude:
+          message.location?.latitude,
+
+        longitude:
+          message.location?.longitude,
+
+        name:
+          message.location?.name,
+
+        address:
+          message.location?.address
+
+      });
+
+      break;
+
+    case "button":
 
       mensaje =
-        message.document
-          ?.filename || "";
+        message.button?.text || "";
 
-    }
+      break;
 
-    else if (
-      tipo === "sticker"
-    ) {
+    case "interactive":
 
-      media_id =
-        message.sticker?.id ||
-        null;
+      mensaje = JSON.stringify(
+        message.interactive || {}
+      );
 
-    }
+      break;
 
-    else if (
-  tipo === "contacts"
-) {
+    case "reaction":
 
-  mensaje = JSON.stringify(
-    message.contacts?.[0] || {}
-  );
+      mensaje = JSON.stringify({
 
-}
+        emoji:
+          message.reaction?.emoji,
 
-    return {
+        message_id:
+          message.reaction?.message_id
 
-      tipo,
-      mensaje,
-      media_id
+      });
 
-    };
+      break;
+
+    default:
+
+      mensaje = JSON.stringify(
+        message
+      );
+
+      break;
+
+  }
+
+  return {
+
+    tipo,
+    mensaje,
+    media_id
 
   };
+
+};
