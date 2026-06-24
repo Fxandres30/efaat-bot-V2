@@ -63,6 +63,27 @@ router.post(
         value.statuses
       ) {
 
+        if (value.statuses) {
+
+  console.log(
+    "STATUS RECIBIDO:"
+  );
+
+  console.dir(
+    value.statuses[0],
+    { depth: null }
+  );
+
+  await actualizarEstado(
+    value.statuses[0]
+  );
+
+  return res.sendStatus(
+    200
+  );
+
+}
+
         await actualizarEstado(
           value.statuses[0]
         );
