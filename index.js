@@ -46,6 +46,11 @@ app.use(
 );
 
 app.use(
+  "/meta/send-template",
+  require("./routes/sendTemplate")
+);
+
+app.use(
   "/meta",
   whatsappWebhook
 );
