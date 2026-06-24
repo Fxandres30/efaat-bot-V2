@@ -47,7 +47,9 @@ app.use(
 
 app.use(
   "/meta/send-template",
-  require("./routes/sendTemplate")
+  require(
+    "./routes/sendTemplate"
+  )
 );
 
 app.use(
