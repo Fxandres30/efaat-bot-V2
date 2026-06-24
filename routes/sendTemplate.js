@@ -4,6 +4,9 @@ const router =
 const axios =
   require("axios");
 
+const supabase =
+  require("../lib/supabase");
+
 router.post("/", async (req, res) => {
 
   try {
@@ -58,6 +61,32 @@ router.post("/", async (req, res) => {
         }
 
       );
+
+    await supabase
+      .from("messages")
+      .insert({
+
+        telefono,
+
+        mensaje:
+          `[PLANTILLA] ${template}`,
+
+        from_me: true,
+
+        tipo: "template",
+
+        media_id: null,
+
+        media_url: null,
+
+        wamid:
+          response.data?.messages?.[0]?.id || null,
+
+        estado: "sent",
+
+        leido: true
+
+      });
 
     console.log(
       response.data
