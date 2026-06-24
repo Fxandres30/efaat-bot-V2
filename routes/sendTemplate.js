@@ -62,7 +62,10 @@ router.post("/", async (req, res) => {
 
       );
 
-    await supabase
+    const {
+      data,
+      error
+    } = await supabase
       .from("messages")
       .insert({
 
@@ -86,10 +89,32 @@ router.post("/", async (req, res) => {
 
         leido: true
 
-      });
+      })
+      .select();
 
     console.log(
-      response.data
+      "SUPABASE TEMPLATE:"
+    );
+
+    console.dir(
+      {
+        data,
+        error
+      },
+      {
+        depth: null
+      }
+    );
+
+    console.log(
+      "META RESPONSE:"
+    );
+
+    console.dir(
+      response.data,
+      {
+        depth: null
+      }
     );
 
     return res.json(
@@ -104,9 +129,12 @@ router.post("/", async (req, res) => {
       "ERROR TEMPLATE:"
     );
 
-    console.log(
+    console.dir(
       err.response?.data ||
-      err.message
+      err,
+      {
+        depth: null
+      }
     );
 
     return res
