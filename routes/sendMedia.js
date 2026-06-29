@@ -37,6 +37,85 @@ const archivo =
       const mimeType =
         archivo.mimetype;
 
+        const formatos = {
+
+  image: [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ],
+
+  video: [
+    "video/mp4",
+    "video/3gpp"
+  ],
+
+  audio: [
+    "audio/mpeg",
+    "audio/mp4",
+    "audio/aac",
+    "audio/amr",
+    "audio/ogg",
+    "audio/opus"
+  ],
+
+  document: [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "text/plain"
+  ]
+
+};
+
+const permitido =
+  Object.values(formatos)
+    .flat()
+    .includes(mimeType);
+
+if (!permitido) {
+
+  fs.unlinkSync(
+    archivo.path
+  );
+
+  return res.status(400).json({
+
+    error:true,
+
+    message:
+      `Formato no soportado (${mimeType})`
+
+  });
+
+}
+
+const LIMITE =
+  16 * 1024 * 1024;
+
+if (
+  archivo.size > LIMITE
+){
+
+  fs.unlinkSync(
+    archivo.path
+  );
+
+  return res.status(400).json({
+
+    error:true,
+
+    message:
+      "Archivo demasiado grande."
+
+  });
+
+}
+
       // =====================
       // SUBIR A WHATSAPP
       // =====================
@@ -221,16 +300,33 @@ console.log(
 
     catch (err) {
 
-      console.log(
-        err.response?.data ||
-        err.message
-      );
+  console.error(
+    "ERROR META:"
+  );
 
-      return res.status(500).json({
-        error: true
-      });
+  console.error(
+    err.response?.data ||
+    err
+  );
 
-    }
+  return res.status(
+
+    err.response?.status ||
+    500
+
+  ).json({
+
+    error:true,
+
+    message:
+
+      err.response?.data?.error?.message ||
+
+      err.message
+
+  });
+
+}
 
   }
 );
