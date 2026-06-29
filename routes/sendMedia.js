@@ -35,7 +35,16 @@ router.post(
 
   const body = req.body || {};
 
-  const telefono = body.telefono;
+  console.log("BODY:");
+console.dir(req.body, { depth: null });
+
+console.log("FILE:");
+console.dir(req.file, { depth: null });
+
+console.log("HEADERS:");
+console.dir(req.headers, { depth: null });
+
+  const telefono = req.body?.telefono;
 
   const mensaje = body.mensaje || "";
 
