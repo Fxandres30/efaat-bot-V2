@@ -19,22 +19,43 @@ router.post(
 
     try {
 
-      const telefono =
-  req.body.telefono;
+  console.log("========== SEND MEDIA ==========");
 
-const mensaje =
-  req.body.mensaje || "";
+  console.log("HEADERS:");
+  console.dir(req.headers, { depth: null });
 
-const archivo =
-  req.file;
+  console.log("CONTENT-TYPE:");
+  console.log(req.headers["content-type"]);
 
-      if (!archivo) {
+  console.log("BODY:");
+  console.dir(req.body, { depth: null });
 
-        return res.status(400).json({
-          error: "No file"
-        });
+  console.log("FILE:");
+  console.dir(req.file, { depth: null });
 
-      }
+  const body = req.body || {};
+
+  const telefono = body.telefono;
+
+  const mensaje = body.mensaje || "";
+
+  const archivo = req.file;
+
+  if (!telefono) {
+    return res.status(400).json({
+      error: true,
+      message: "Telefono no recibido"
+    });
+  }
+
+  if (!archivo) {
+    return res.status(400).json({
+      error: true,
+      message: "Archivo no recibido"
+    });
+  }
+
+  // AQUÍ SIGUE TU CÓDIGO TAL COMO ESTÁ...
 
       const mimeType =
         archivo.mimetype;
