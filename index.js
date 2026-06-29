@@ -1,55 +1,32 @@
 require("dotenv").config();
 
-const cors =
-  require("cors");
+const express = require("express");
+const cors = require("cors");
 
-const express =
-  require("express");
+const app = express();
 
-const whatsappWebhook =
-  require(
-    "./webhooks/whatsappWebhook"
-  );
+const whatsappWebhook = require("./webhooks/whatsappWebhook");
 
 const {
-
   enviarComprobanteAdmin,
   enviarConfirmacionCliente
+} = require("./services/enviarComprobante");
 
-} = require(
-  "./services/enviarComprobante"
-);
+app.use(cors({
+  origin: "*"
+}));
 
-const app =
-  express();
+app.use(express.json({
+  limit: "20mb"
+}));
 
-app.use(
-  cors({
-    origin: "*"
-  })
-);
-
-app.use(
-  express.json({
-    limit: "20mb"
-  })
-);
-
-app.use(
-  "/debug",
-  require("./routes/test-media")
-);
+// =====================
+// RUTAS
+// =====================
 
 app.use(
   "/media",
   require("./routes/media")
-);
-
-app.use(
-  "/meta/send-template",
-  require(
-    "./routes/sendTemplate"
-  )
 );
 
 app.use(
@@ -67,7 +44,10 @@ app.use(
   require("./routes/sendMedia")
 );
 
-/* NUEVAS */
+app.use(
+  "/meta/send-template",
+  require("./routes/sendTemplate")
+);
 
 app.use(
   "/meta/archive-chat",
@@ -89,95 +69,61 @@ app.use(
   require("./routes/deleteChat")
 );
 
-app.post(
+// =====================
+// COMPROBANTES
+// =====================
 
-  "/enviar-comprobante",
+app.post("/enviar-comprobante", async (req, res) => {
 
-  async (req, res) => {
+  try {
 
-    try {
+    console.log("📥 NUEVO COMPROBANTE");
+    console.log(req.body);
 
-      console.log(
-        "📥 NUEVO COMPROBANTE"
-      );
+    await enviarComprobanteAdmin(req.body);
 
-      console.log(
-        req.body
-      );
+    console.log("✅ ADMIN OK");
 
-      console.log(
-  "BODY RECIBIDO:"
-);
+    await enviarConfirmacionCliente(req.body);
 
-console.log(req.body);
+    console.log("✅ CLIENTE OK");
 
-      await enviarComprobanteAdmin(
-        req.body
-      );
+    res.json({
+      ok: true
+    });
 
-      console.log(
-        "✅ ADMIN OK"
-      );
+  } catch (err) {
 
-      await enviarConfirmacionCliente(
-        req.body
-      );
+    console.error(err);
 
-      console.log(
-        "✅ CLIENTE OK"
-      );
-
-      res.json({
-        ok: true
-      });
-
-    }
-
-    catch (err) {
-
-      console.log(
-        "❌ ERROR EN /enviar-comprobante"
-      );
-
-      console.log(
-        "MENSAJE:",
-        err?.message
-      );
-
-      console.log(
-        "RESPUESTA META:"
-      );
-
-      console.dir(
-        err?.response?.data,
-        { depth: null }
-      );
-
-      console.dir(
-        err,
-        { depth: null }
-      );
-
-      res.status(500).json({
-
-        ok: false,
-
-        error:
-          err?.message ||
-          "Error desconocido"
-
-      });
-
-    }
+    res.status(500).json({
+      ok: false,
+      error: err.message
+    });
 
   }
 
-);
+});
+
+// =====================
+// ERROR GLOBAL
+// =====================
+
+app.use((err, req, res, next) => {
+
+  console.error(err);
+
+  res.status(500).json({
+    error: true,
+    message: err.message
+  });
+
+});
+
+// =====================
 
 app.listen(3001, () => {
 
-  console.log(
-    "🚀 META API ACTIVA EN 3001"
-  );
+  console.log("🚀 META API ACTIVA EN 3001");
 
 });
