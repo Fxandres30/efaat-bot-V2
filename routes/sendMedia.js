@@ -15,6 +15,8 @@ router.post(
   upload.single("file"),
   async (req, res) => {
 
+    console.log("🔥🔥🔥 ENTRÓ A SEND MEDIA 🔥🔥🔥");
+
     try {
 
       const telefono =

@@ -67,16 +67,6 @@ app.use(
   require("./routes/sendMedia")
 );
 
-app.use(
-  "/meta/send-message",
-  require("./routes/sendMessage")
-);
-
-app.use(
-  "/meta/send-media",
-  require("./routes/sendMedia")
-);
-
 /* NUEVAS */
 
 app.use(
