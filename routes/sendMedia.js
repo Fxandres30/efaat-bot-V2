@@ -127,24 +127,19 @@ const archivo =
 
       };
 
-      if (
-  type === "image" ||
-  type === "video"
+    payload[type] = {
+  id: mediaId
+};
+
+if (
+  mensaje &&
+  [
+    "image",
+    "video",
+    "document"
+  ].includes(type)
 ) {
-
-  payload[type] = {
-    id: mediaId,
-    caption: mensaje
-  };
-
-}
-
-else {
-
-  payload[type] = {
-    id: mediaId
-  };
-
+  payload[type].caption = mensaje;
 }
 
       const response =
@@ -185,6 +180,15 @@ const insertResult =
 
       media_url:
         `https://efaat.com/media/${mediaId}`,
+
+      file_name:
+        archivo.originalname,
+
+      mime_type:
+        mimeType,
+
+      file_size:
+        archivo.size,
 
       wamid,
 
